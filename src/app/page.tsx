@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { FaBezierCurve } from 'react-icons/fa';
 
 export default function Home() {
   return (
@@ -12,6 +13,64 @@ export default function Home() {
           height={38}
           priority
         />
+        <FaBezierCurve className="size-12" />
+
+        {/* Start */}
+        <div
+          className="container mx-auto divide-y divide-gray-400 divide-dotted"
+          style={{ fontFamily: 'Raleway' }}
+        >
+          <div className="w-full flex items-center justify-between px-4 py-2">
+            <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 grid-rows-3 gap-2">
+              <span className="w-16 h-16 bg-red-500 text-white px-3 py-2 rounded-md">
+                1
+              </span>
+              <span className="w-16 h-16 bg-green-500 text-white px-3 py-2 rounded-md">
+                2
+              </span>
+              <span className="w-16 h-16 bg-blue-500 text-white px-3 py-2 rounded-md">
+                3
+              </span>
+              <span className="w-16 h-16 bg-indigo-500 text-white px-3 py-2 rounded-md">
+                4
+              </span>
+              <span className="w-16 h-16 bg-purple-500 text-white px-3 py-2 rounded-md">
+                5
+              </span>
+              <span className="w-16 h-16 bg-yellow-300 text-white px-3 py-2 rounded-md">
+                6
+              </span>
+              <span className="w-16 h-16 bg-red-500 text-white px-3 py-2 rounded-md">
+                7
+              </span>
+              <span className="w-16 h-16 bg-green-500 text-white px-3 py-2 rounded-md">
+                8
+              </span>
+              <span className="w-16 h-16 bg-blue-500 text-white px-3 py-2 rounded-md">
+                9
+              </span>
+              <span className="w-16 h-16 bg-indigo-500 text-white px-3 py-2 rounded-md">
+                10
+              </span>
+              <span className="w-16 h-16 bg-purple-500 text-white px-3 py-2 rounded-md">
+                11
+              </span>
+              <span className="w-16 h-16 bg-yellow-300 text-white px-3 py-2 rounded-md">
+                12
+              </span>
+            </div>
+            <div className="ml-5 text-right">
+              <div className="text-xs font-semibold inline-block font-mono whitespace-nowrap px-2 py-1 rounded text-white bg-pink-500 rounded-2">
+                grid-cols-AMT
+              </div>
+              <div className="text-xs font-mono text-gray-500">
+                <b className="text-black mt-3 inline-block">AMT</b>none
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* End */}
         <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
           <li className="mb-2">
             Get started by editing{' '}
