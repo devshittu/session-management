@@ -91,5 +91,8 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [require('daisyui')],
+  daisyui: {
+    themes: ['light', 'dark', 'cupcake'], // Add or customize themes as needed
+  },
 } satisfies Config;
