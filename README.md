@@ -65,3 +65,8 @@ docker kill $(docker ps -aq) && docker rm $(docker ps -aq)
 # Free space
 docker system prune -af --volumes
 ```
+
+npx prisma init --datasource-provider sqlite
+npx prisma migrate dev --name init
+npx prisma db seed
+npx prisma studio
