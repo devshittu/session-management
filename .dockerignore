@@ -8,3 +8,7 @@ npm-debug.log
 .next
 .vscode
 # .storybook
+
+Dockerfile*
+docker-compose*
+README.md
