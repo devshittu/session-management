@@ -4,7 +4,7 @@ import SessionsList from './SessionsList';
 
 type Session = {
   id: number;
-  patient: { name: string };
+  serviceUser: { name: string };
   activity: { name: string };
   timeIn: string;
   timeOut?: string | null;
@@ -12,14 +12,14 @@ type Session = {
 export default async function SessionsPage() {
   const sessions = await prisma.session.findMany({
     include: {
-      patient: true,
+      serviceUser: true,
       activity: true,
     },
   });
 
   const serializedSessions: Session[] = sessions.map((session) => ({
     id: session.id,
-    patient: { name: session.patient.name },
+    serviceUser: { name: session.serviceUser.name },
     activity: { name: session.activity.name },
     timeIn: session.timeIn.toISOString(),
     timeOut: session.timeOut ? session.timeOut.toISOString() : null,
