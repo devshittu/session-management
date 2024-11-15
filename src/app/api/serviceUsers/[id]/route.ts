@@ -1,4 +1,3 @@
-// app/api/serviceUsers/[id]/route.ts
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { ServiceUserStatus } from '@/types/serviceUser';
@@ -11,9 +10,10 @@ type UpdateserviceUserBody = {
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
-  const serviceUserId = parseInt(params.id);
+  const { id } = await params;
+  const serviceUserId = parseInt(id);
 
   if (isNaN(serviceUserId)) {
     return NextResponse.json(
@@ -50,9 +50,10 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
-  const serviceUserId = parseInt(params.id);
+  const { id } = await params;
+  const serviceUserId = parseInt(id);
 
   if (isNaN(serviceUserId)) {
     return NextResponse.json(
@@ -105,9 +106,10 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
-  const serviceUserId = parseInt(params.id);
+  const { id } = await params;
+  const serviceUserId = parseInt(id);
 
   if (isNaN(serviceUserId)) {
     return NextResponse.json(
@@ -132,3 +134,5 @@ export async function DELETE(
     );
   }
 }
+
+// src/app/api/serviceUsers/[id]/route.ts
