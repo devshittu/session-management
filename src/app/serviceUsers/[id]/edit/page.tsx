@@ -3,13 +3,12 @@ import { ServiceUser, ServiceUserStatus } from '@/types/serviceUser';
 import EditServiceUserForm from './EditServiceUserForm';
 
 type Params = {
-  params: {
-    id: string;
-  };
+  params: Promise<{ id: string }>;
 };
 
 export default async function EditServiceUserPage({ params }: Params) {
-  const serviceUserId = parseInt(params.id);
+  const { id } = await params; // Resolve params as a Promise
+  const serviceUserId = parseInt(id);
 
   if (isNaN(serviceUserId)) {
     return <p>Invalid serviceUser ID.</p>;
