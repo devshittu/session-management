@@ -1,60 +1,51 @@
-// components/PieChart.tsx
 'use client';
 
-import { Pie } from 'react-chartjs-2';
 import { ActivityReport } from '@/types/report';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-
-ChartJS.register(ArcElement, Tooltip, Legend);
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from 'recharts';
 
 type Props = {
   data: ActivityReport[];
 };
 
-const PieChart: React.FC<Props> = ({ data }) => {
-  const chartData = {
-    labels: data.map((d) => d.activityName),
-    datasets: [
-      {
-        label: '# of Sessions',
-        data: data.map((d) => d.count),
-        backgroundColor: [
-          'rgba(59, 130, 246, 0.5)', // Blue
-          'rgba(249, 115, 22, 0.5)', // Orange
-          'rgba(16, 185, 129, 0.5)', // Green
-          'rgba(67, 56, 202, 0.5)', // Purple
-          // Add more colors as needed
-        ],
-        borderColor: [
-          'rgba(59, 130, 246, 1)',
-          'rgba(249, 115, 22, 1)',
-          'rgba(16, 185, 129, 1)',
-          'rgba(67, 56, 202, 1)',
-          // Add more border colors as needed
-        ],
-        borderWidth: 1,
-      },
-    ],
-  };
+const COLORS = ['#3B82F6', '#F97316', '#10B981', '#4338CA'];
 
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'right' as const,
-      },
-      title: {
-        display: true,
-        text: 'Sessions Distribution per Activity',
-      },
-    },
-  };
-
+const CustomPieChart: React.FC<Props> = ({ data }) => {
   return (
     <div className="h-80">
-      <Pie data={chartData} options={options} />
+      <ResponsiveContainer width="100%" height="100%">
+        <PieChart>
+          <Pie
+            data={data}
+            dataKey="count"
+            nameKey="activityName"
+            cx="50%"
+            cy="50%"
+            outerRadius={80}
+            fill="#8884d8"
+            label
+          >
+            {data.map((_, index) => (
+              <Cell
+                key={`cell-${index}`}
+                fill={COLORS[index % COLORS.length]}
+              />
+            ))}
+          </Pie>
+          <Tooltip />
+          <Legend />
+        </PieChart>
+      </ResponsiveContainer>
     </div>
   );
 };
 
-export default PieChart;
+export default CustomPieChart;
+
+// src/components/PieChart.tsx
