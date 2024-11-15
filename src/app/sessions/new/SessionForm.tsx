@@ -4,7 +4,7 @@
 import { useRouter } from 'next/navigation';
 import { useState, FormEvent } from 'react';
 
-type Patient = {
+type ServiceUser = {
   id: number;
   name: string;
 };
@@ -15,26 +15,26 @@ type Activity = {
 };
 
 type Props = {
-  patients: Patient[];
+  serviceUsers: ServiceUser[];
   activities: Activity[];
 };
 
-const SessionForm = ({ patients, activities }: Props) => {
+const SessionForm = ({ serviceUsers, activities }: Props) => {
   const router = useRouter();
-  const [patientId, setPatientId] = useState<number | ''>('');
+  const [serviceUserId, setServiceUserId] = useState<number | ''>('');
   const [activityId, setActivityId] = useState<number | ''>('');
 
   const startSession = async (e: FormEvent) => {
     e.preventDefault();
-    if (patientId === '' || activityId === '') {
-      alert('Please select both patient and activity.');
+    if (serviceUserId === '' || activityId === '') {
+      alert('Please select both serviceUser and activity.');
       return;
     }
 
     const response = await fetch('/api/sessions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ patientId, activityId }),
+      body: JSON.stringify({ serviceUserId, activityId }),
     });
 
     if (response.ok) {
@@ -47,18 +47,18 @@ const SessionForm = ({ patients, activities }: Props) => {
   return (
     <form onSubmit={startSession}>
       <div>
-        <label htmlFor="patientId">Patient:</label>
+        <label htmlFor="serviceUserId">ServiceUser:</label>
         <select
-          name="patientId"
-          id="patientId"
-          value={patientId}
-          onChange={(e) => setPatientId(Number(e.target.value))}
+          name="serviceUserId"
+          id="serviceUserId"
+          value={serviceUserId}
+          onChange={(e) => setServiceUserId(Number(e.target.value))}
           required
         >
-          <option value="">Select Patient</option>
-          {patients.map((patient) => (
-            <option key={patient.id} value={patient.id}>
-              {patient.name}
+          <option value="">Select ServiceUser</option>
+          {serviceUsers.map((serviceUser) => (
+            <option key={serviceUser.id} value={serviceUser.id}>
+              {serviceUser.name}
             </option>
           ))}
         </select>
