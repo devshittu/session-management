@@ -33,8 +33,8 @@ export default function RootLayout({
             <a href="/sessions" className="text-white hover:text-gray-300">
               Sessions
             </a>
-            <a href="/patients" className="text-white hover:text-gray-300">
-              Patients
+            <a href="/serviceUsers" className="text-white hover:text-gray-300">
+              ServiceUsers
             </a>
             <a href="/activities" className="text-white hover:text-gray-300">
               Activities
