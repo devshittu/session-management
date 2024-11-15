@@ -3,9 +3,11 @@
 
 import { useState, useEffect } from 'react';
 import ReportControls from '@/components/ReportControls';
-import BarChart from '@/components/BarChart';
-import PieChart from '@/components/PieChart';
+// import BarChart from '@/components/BarChart';
+// import PieChart from '@/components/PieChart';
 import { TimeFrame, ActivityReport } from '@/types/report';
+import CustomBarChart from '@/components/BarChart';
+import CustomPieChart from '@/components/PieChart';
 
 const Reports: React.FC = () => {
   const [timeFrame, setTimeFrame] = useState<TimeFrame>('daily');
@@ -36,10 +38,10 @@ const Reports: React.FC = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-whitex p-4 shadow-md rounded-lg">
-            <BarChart data={reportData} />
+            <CustomBarChart data={reportData} />
           </div>
           <div className="bg-whitex p-4 shadow-md rounded-lg">
-            <PieChart data={reportData} />
+            <CustomPieChart data={reportData} />
           </div>
         </div>
       )}
