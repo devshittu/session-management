@@ -1,32 +1,43 @@
 // prisma/seed.ts
-import { prisma } from '@/lib/prisma';
+// import { prisma } from '@/lib/prisma';
+import { prisma } from '../src/lib/prisma';
+
 async function main() {
   // Create Wards
-  const wardNames = ['Ward A', 'Ward B', 'Ward C', 'Ward D'];
+  const wardNames = ['Elm', 'Juniper', 'Mulberry', 'Palm'];
   const wards = await Promise.all(
-    wardNames.map((name) => prisma.ward.create({ data: { name } })),
+    wardNames.map((name) =>
+      prisma.ward.create({
+        data: { name },
+      }),
+    ),
   );
 
-  // Create Patients
+  // Create ServiceUsers
   for (const ward of wards) {
-    const patientPromises = [];
+    const serviceUserPromises = [];
     for (let i = 1; i <= 20; i++) {
-      patientPromises.push(
-        prisma.patient.create({
+      serviceUserPromises.push(
+        prisma.serviceUser.create({
           data: {
-            name: `Patient ${i} - ${ward.name}`,
+            name: `ServiceUser ${i} - ${ward.name}`,
             wardId: ward.id,
+            status: 'admitted', // Default status
           },
         }),
       );
     }
-    await Promise.all(patientPromises);
+    await Promise.all(serviceUserPromises);
   }
 
   // Create Activities
   const activityNames = ['Art Therapy', 'Social Hub', 'Cyber Cafe', 'Gym'];
   await Promise.all(
-    activityNames.map((name) => prisma.activity.create({ data: { name } })),
+    activityNames.map((name) =>
+      prisma.activity.create({
+        data: { name },
+      }),
+    ),
   );
 }
 
