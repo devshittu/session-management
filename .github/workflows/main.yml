@@ -27,7 +27,7 @@ jobs:
         run: |
           echo DATABASE_URL=${{ vars.DATABASE_URL }} > .env
       - run: mv .env.example .env
-      - run: npm install
+      - run: npm install --legacy-peer-deps
       # - run: npm run test
       - run: npm run lint
       - run: npm run format:check
@@ -59,13 +59,13 @@ jobs:
 
 
       # Install dependencies and Prisma client
-      - run: npm install
+      - run: npm install --legacy-peer-deps
       - run: npx prisma generate
       
       # Apply Prisma migrations before deployment
       - name: Apply Prisma Migrations
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: ${{ vars.DATABASE_URL }}
         run: |
           npx prisma migrate deploy
           
