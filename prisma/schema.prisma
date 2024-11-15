@@ -16,15 +16,18 @@ datasource db {
 model Ward {
   id       Int       @id @default(autoincrement())
   name     String
-  patients Patient[]
+  serviceUsers ServiceUser[]
 }
 
-model Patient {
+model ServiceUser {
   id       Int       @id @default(autoincrement())
   name     String
   ward     Ward      @relation(fields: [wardId], references: [id])
   wardId   Int
   sessions Session[]
+  status    String   @default("admitted") // "admitted" or "discharged"
+  createdAt DateTime @default(now())
+  updatedAt DateTime? @updatedAt
 }
 
 model Activity {
@@ -35,8 +38,8 @@ model Activity {
 
 model Session {
   id         Int       @id @default(autoincrement())
-  patient    Patient   @relation(fields: [patientId], references: [id])
-  patientId  Int
+  serviceUser    ServiceUser   @relation(fields: [serviceUserId], references: [id])
+  serviceUserId  Int
   activity   Activity  @relation(fields: [activityId], references: [id])
   activityId Int
   timeIn     DateTime
