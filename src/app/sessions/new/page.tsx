@@ -2,7 +2,7 @@
 import { prisma } from '@/lib/prisma';
 import SessionForm from './SessionForm';
 
-type Patient = {
+type ServiceUser = {
   id: number;
   name: string;
 };
@@ -13,15 +13,16 @@ type Activity = {
 };
 
 export default async function NewSessionPage() {
-  const [patients, activities]: [Patient[], Activity[]] = await Promise.all([
-    prisma.patient.findMany(),
-    prisma.activity.findMany(),
-  ]);
+  const [serviceUsers, activities]: [ServiceUser[], Activity[]] =
+    await Promise.all([
+      prisma.serviceUser.findMany(),
+      prisma.activity.findMany(),
+    ]);
 
   return (
     <div>
       <h1>Start New Session</h1>
-      <SessionForm patients={patients} activities={activities} />
+      <SessionForm serviceUsers={serviceUsers} activities={activities} />
     </div>
   );
 }
