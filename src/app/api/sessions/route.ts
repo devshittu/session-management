@@ -5,7 +5,7 @@ import { prisma } from '@/lib/prisma';
 export async function GET() {
   const sessions = await prisma.session.findMany({
     include: {
-      patient: true,
+      serviceUser: true,
       activity: true,
     },
   });
@@ -14,11 +14,11 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const data = await request.json();
-  const { patientId, activityId } = data;
+  const { serviceUserId, activityId } = data;
 
-  if (!patientId || !activityId) {
+  if (!serviceUserId || !activityId) {
     return NextResponse.json(
-      { error: 'Missing patientId or activityId' },
+      { error: 'Missing serviceUserId or activityId' },
       { status: 400 },
     );
   }
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
   try {
     const session = await prisma.session.create({
       data: {
-        patientId,
+        serviceUserId,
         activityId,
         timeIn: new Date(),
       },
