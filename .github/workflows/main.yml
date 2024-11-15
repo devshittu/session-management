@@ -55,8 +55,11 @@ jobs:
           env: ${{ fromJSON('["Production", "Preview"]')
             [github.ref != 'refs/heads/master'] }}
       - uses: actions/checkout@v3
-      - run: mv .env.example .env
+      # - run: mv .env.example .env
 
+      - name: Create .env file
+        run: |
+          echo DATABASE_URL=${{ vars.DATABASE_URL }} > .env
 
       # Install dependencies and Prisma client
       - run: npm install --legacy-peer-deps
