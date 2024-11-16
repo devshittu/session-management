@@ -63,14 +63,14 @@ jobs:
 
       # Install dependencies and Prisma client
       - run: npm install --legacy-peer-deps
-      - run: npx prisma generate
+      # - run: npx prisma generate
       
-      # Apply Prisma migrations before deployment
-      - name: Apply Prisma Migrations
-        env:
-          DATABASE_URL: ${{ vars.DATABASE_URL }}
-        run: |
-          npx prisma migrate deploy
+      # # Apply Prisma migrations before deployment
+      # - name: Apply Prisma Migrations
+      #   env:
+      #     DATABASE_URL: ${{ vars.DATABASE_URL }}
+      #   run: |
+      #     npx prisma migrate deploy
           
 
       - uses: amondnet/vercel-action@v25
