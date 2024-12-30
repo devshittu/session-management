@@ -1,10 +1,9 @@
-// app/sessions/new/page.tsx
 import { prisma } from '@/lib/prisma';
 import SessionForm from './SessionForm';
 
-type ServiceUser = {
+type Admission = {
   id: number;
-  name: string;
+  serviceUser: { id: number; name: string };
 };
 
 type Activity = {
@@ -13,16 +12,20 @@ type Activity = {
 };
 
 export default async function NewSessionPage() {
-  const [serviceUsers, activities]: [ServiceUser[], Activity[]] =
-    await Promise.all([
-      prisma.serviceUser.findMany(),
-      prisma.activity.findMany(),
-    ]);
+  const [admissions, activities]: [Admission[], Activity[]] = await Promise.all([
+    prisma.admission.findMany({
+      where: { dischargeDate: null }, // Fetch only active admissions
+      include: { serviceUser: true },
+    }),
+    prisma.activity.findMany(),
+  ]);
 
   return (
     <div>
-      <h1>Start New Session</h1>
-      <SessionForm serviceUsers={serviceUsers} activities={activities} />
+      <h1 className="text-2xl font-bold mb-4">Start New Session</h1>
+      <SessionForm admissions={admissions} activities={activities} />
     </div>
   );
 }
+
+// src/app/sessions/new/page.tsx
