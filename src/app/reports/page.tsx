@@ -40,7 +40,7 @@
 // }
 
 // app/reports/page.tsx
-import Reports from '@/components/Reports';
+import Reports from '@/components/Reports/Reports';
 
 export default function ReportsPage() {
   return (
