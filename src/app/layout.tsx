@@ -1,6 +1,10 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
+import './prism.css';
+import Link from 'next/link';
+import { Work_Sans } from 'next/font/google';
+import { AppProvider } from '@/providers/app';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -28,23 +32,37 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+          <AppProvider>
         <nav className="bg-gray-800 p-4">
           <div className="container mx-auto flex space-x-4">
-            <a href="/sessions" className="text-white hover:text-gray-300">
+
+            <Link href="/" className="text-white hover:text-gray-300">
+              Home
+            </Link>
+
+            <Link href="/sessions" className="text-white hover:text-gray-300">
               Sessions
-            </a>
-            <a href="/serviceUsers" className="text-white hover:text-gray-300">
+            </Link>
+            <Link href="/serviceUsers" className="text-white hover:text-gray-300">
               ServiceUsers
-            </a>
-            <a href="/activities" className="text-white hover:text-gray-300">
+            </Link>
+            <Link href="/activities" className="text-white hover:text-gray-300">
               Activities
-            </a>
-            <a href="/reports" className="text-white hover:text-gray-300">
+            </Link>
+            <Link href="/reports" className="text-white hover:text-gray-300">
               Reports
-            </a>
+            </Link>
+            <Link href="/feel" className="text-white hover:text-gray-300">
+              Look & Feel
+            </Link>
+            <Link href="/playground/box" className="text-white hover:text-gray-300">
+              Playground Box
+            </Link>
           </div>
         </nav>
         <main className="container mx-auto p-4">{children}</main>
+
+          </AppProvider>
       </body>
     </html>
   );
