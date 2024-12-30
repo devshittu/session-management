@@ -68,5 +68,7 @@ docker system prune -af --volumes
 
 npx prisma init --datasource-provider sqlite
 npx prisma migrate dev --name init
+rm prisma/dev.db
+rm -rf prisma/migrations
 npx prisma db seed
 npx prisma studio
