@@ -12,11 +12,38 @@ export default {
       colors: {
         background: 'var(--background)',
         foreground: 'var(--foreground)',
+
+        primary: '#333333',
+        secondary: '#666666',
+        accent: '#FF5733',
+        blue: {
+          500: '#3B82F6',
+          400: '#60A5FA',
+          600: '#2563EB',
+        },
+        red: {
+          500: '#EF4444',
+        },
+        yellow: {
+          100: '#FEF3C7',
+          200: '#FDE68A',
+        },
+        green: {
+          500: '#10B981',
+        },
+        purple: {
+          500: '#8B5CF6',
+        },
       },
       fontFamily: {
+        // 'work-sans': ['"Work Sans"', 'sans-serif'],
         inter: ['Inter', ...fontFamily.sans],
         'roboto-mono': ['Roboto Mono', ...fontFamily.mono],
         'source-serif-pro': ['Source Serif Pro', ...fontFamily.serif],
+
+        sans: ['"Helvetica Neue"', 'Helvetica', 'Arial', 'sans-serif'],
+        serif: ['Georgia', 'serif'],
+        mono: ['"Courier New"', 'monospace'],
       },
       keyframes: {
         scroll: {
