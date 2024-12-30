@@ -26,3 +26,5 @@ export async function POST(
     );
   }
 }
+
+// src/app/api/sessions/[id]/end/route.ts
