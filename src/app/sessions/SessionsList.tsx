@@ -1,4 +1,3 @@
-// app/sessions/SessionsList.tsx
 'use client';
 
 import { useRouter } from 'next/navigation';
@@ -6,7 +5,9 @@ import ElapsedTime from './ElapsedTime';
 
 type Session = {
   id: number;
-  serviceUser: { name: string };
+  admission: {
+    serviceUser: { name: string };
+  };
   activity: { name: string };
   timeIn: string;
   timeOut?: string | null;
@@ -36,7 +37,7 @@ const SessionsList = ({ sessions }: Props) => {
         <thead className="bg-gray-800 text-white">
           <tr>
             <th className="w-1/6 py-3 px-4 uppercase font-semibold text-sm">
-              ServiceUser
+              Service User
             </th>
             <th className="w-1/6 py-3 px-4 uppercase font-semibold text-sm">
               Activity
@@ -58,7 +59,7 @@ const SessionsList = ({ sessions }: Props) => {
         <tbody className="text-gray-700">
           {sessions.map((session) => (
             <tr key={session.id} className="border-b hover:bg-gray-100">
-              <td className="py-3 px-4">{session.serviceUser.name}</td>
+              <td className="py-3 px-4">{session.admission.serviceUser.name}</td>
               <td className="py-3 px-4">{session.activity.name}</td>
               <td className="py-3 px-4">
                 {new Date(session.timeIn).toLocaleString()}
@@ -93,3 +94,5 @@ const SessionsList = ({ sessions }: Props) => {
 };
 
 export default SessionsList;
+
+// src/app/sessions/SessionsList.tsx

@@ -1,25 +1,30 @@
-// app/sessions/page.tsx
 import { prisma } from '@/lib/prisma';
 import SessionsList from './SessionsList';
+import InfiniteSessionsList from './InfiniteSessionsList';
 
 type Session = {
   id: number;
-  serviceUser: { name: string };
+  admission: {
+    serviceUser: { name: string };
+  };
   activity: { name: string };
   timeIn: string;
   timeOut?: string | null;
 };
+
 export default async function SessionsPage() {
   const sessions = await prisma.session.findMany({
     include: {
-      serviceUser: true,
+      admission: {
+        include: { serviceUser: true },
+      },
       activity: true,
     },
   });
 
   const serializedSessions: Session[] = sessions.map((session) => ({
     id: session.id,
-    serviceUser: { name: session.serviceUser.name },
+    admission: { serviceUser: { name: session.admission.serviceUser.name } },
     activity: { name: session.activity.name },
     timeIn: session.timeIn.toISOString(),
     timeOut: session.timeOut ? session.timeOut.toISOString() : null,
@@ -34,7 +39,12 @@ export default async function SessionsPage() {
       >
         Start New Session
       </a>
-      <SessionsList sessions={serializedSessions} />
+      {/* <SessionsList sessions={serializedSessions} /> */}
+
+      <InfiniteSessionsList />
     </div>
   );
 }
+
+
+// src/app/sessions/page.tsx
