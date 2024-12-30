@@ -1,4 +1,4 @@
-// components/EditServiceUserForm.tsx
+
 'use client';
 
 import { useState, FormEvent, useEffect } from 'react';
@@ -16,7 +16,6 @@ const EditServiceUserForm: React.FC<Props> = ({ serviceUser }) => {
   const [status, setStatus] = useState<ServiceUserStatus>(serviceUser.status);
   const [wards, setWards] = useState<{ id: number; name: string }[]>([]);
 
-  // Fetch wards on mount
   useEffect(() => {
     const fetchWards = async () => {
       const res = await fetch('/api/wards');
@@ -58,10 +57,7 @@ const EditServiceUserForm: React.FC<Props> = ({ serviceUser }) => {
       className="space-y-4 bg-white p-6 shadow-md rounded-lg"
     >
       <div>
-        <label
-          htmlFor="name"
-          className="block text-sm font-medium text-gray-700"
-        >
+        <label htmlFor="name" className="block text-sm font-medium text-gray-700">
           Name:
         </label>
         <input
@@ -74,10 +70,7 @@ const EditServiceUserForm: React.FC<Props> = ({ serviceUser }) => {
         />
       </div>
       <div>
-        <label
-          htmlFor="wardId"
-          className="block text-sm font-medium text-gray-700"
-        >
+        <label htmlFor="wardId" className="block text-sm font-medium text-gray-700">
           Ward:
         </label>
         <select
@@ -96,10 +89,7 @@ const EditServiceUserForm: React.FC<Props> = ({ serviceUser }) => {
         </select>
       </div>
       <div>
-        <label
-          htmlFor="status"
-          className="block text-sm font-medium text-gray-700"
-        >
+        <label htmlFor="status" className="block text-sm font-medium text-gray-700">
           Status:
         </label>
         <select
@@ -113,10 +103,7 @@ const EditServiceUserForm: React.FC<Props> = ({ serviceUser }) => {
           <option value="discharged">Discharged</option>
         </select>
       </div>
-      <button
-        type="submit"
-        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-      >
+      <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
         Update ServiceUser
       </button>
     </form>
@@ -124,3 +111,5 @@ const EditServiceUserForm: React.FC<Props> = ({ serviceUser }) => {
 };
 
 export default EditServiceUserForm;
+
+// src/app/serviceUsers/[id]/edit/EditServiceUserForm.tsx
