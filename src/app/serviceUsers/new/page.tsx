@@ -10,3 +10,5 @@ export default function NewServiceUserPage() {
     </div>
   );
 }
+
+// src/app/serviceUsers/new/page.tsx
