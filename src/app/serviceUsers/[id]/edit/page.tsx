@@ -1,14 +1,15 @@
+
+
 import { prisma } from '@/lib/prisma';
 import { ServiceUser, ServiceUserStatus } from '@/types/serviceUser';
 import EditServiceUserForm from './EditServiceUserForm';
 
 type Params = {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 };
 
 export default async function EditServiceUserPage({ params }: Params) {
-  const { id } = await params; // Resolve params as a Promise
-  const serviceUserId = parseInt(id);
+  const serviceUserId = parseInt(params.id);
 
   if (isNaN(serviceUserId)) {
     return <p>Invalid serviceUser ID.</p>;
@@ -18,7 +19,6 @@ export default async function EditServiceUserPage({ params }: Params) {
     where: { id: serviceUserId },
     include: {
       ward: true,
-      sessions: true,
     },
   });
 
@@ -29,15 +29,9 @@ export default async function EditServiceUserPage({ params }: Params) {
   const serializedServiceUser: ServiceUser = {
     ...serviceUser,
     createdAt: serviceUser.createdAt.toISOString(),
-    updatedAt: serviceUser.updatedAt
-      ? serviceUser.updatedAt.toISOString()
-      : null,
-    status: serviceUser.status as ServiceUserStatus, // Cast status
-    sessions: serviceUser.sessions.map((session) => ({
-      ...session,
-      timeIn: session.timeIn.toISOString(),
-      timeOut: session.timeOut ? session.timeOut.toISOString() : null,
-    })),
+    updatedAt: serviceUser.updatedAt?.toISOString() || null,
+    sessions: [],
+    status: serviceUser.status as ServiceUserStatus,
   };
 
   return (
@@ -47,5 +41,6 @@ export default async function EditServiceUserPage({ params }: Params) {
     </div>
   );
 }
+
 
 // src/app/serviceUsers/[id]/edit/page.tsx
