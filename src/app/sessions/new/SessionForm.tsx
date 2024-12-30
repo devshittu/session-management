@@ -1,12 +1,11 @@
-// app/sessions/SessionForm.tsx
 'use client';
 
 import { useRouter } from 'next/navigation';
 import { useState, FormEvent } from 'react';
 
-type ServiceUser = {
+type Admission = {
   id: number;
-  name: string;
+  serviceUser: { id: number; name: string };
 };
 
 type Activity = {
@@ -15,26 +14,26 @@ type Activity = {
 };
 
 type Props = {
-  serviceUsers: ServiceUser[];
+  admissions: Admission[];
   activities: Activity[];
 };
 
-const SessionForm = ({ serviceUsers, activities }: Props) => {
+const SessionForm = ({ admissions, activities }: Props) => {
   const router = useRouter();
-  const [serviceUserId, setServiceUserId] = useState<number | ''>('');
+  const [admissionId, setAdmissionId] = useState<number | ''>('');
   const [activityId, setActivityId] = useState<number | ''>('');
 
   const startSession = async (e: FormEvent) => {
     e.preventDefault();
-    if (serviceUserId === '' || activityId === '') {
-      alert('Please select both serviceUser and activity.');
+    if (admissionId === '' || activityId === '') {
+      alert('Please select both admission and activity.');
       return;
     }
 
     const response = await fetch('/api/sessions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ serviceUserId, activityId }),
+      body: JSON.stringify({ admissionId, activityId }),
     });
 
     if (response.ok) {
@@ -45,32 +44,38 @@ const SessionForm = ({ serviceUsers, activities }: Props) => {
   };
 
   return (
-    <form onSubmit={startSession}>
+    <form onSubmit={startSession} className="space-y-4">
       <div>
-        <label htmlFor="serviceUserId">ServiceUser:</label>
+        <label htmlFor="admissionId" className="block font-medium">
+          Service User:
+        </label>
         <select
-          name="serviceUserId"
-          id="serviceUserId"
-          value={serviceUserId}
-          onChange={(e) => setServiceUserId(Number(e.target.value))}
+          name="admissionId"
+          id="admissionId"
+          value={admissionId}
+          onChange={(e) => setAdmissionId(Number(e.target.value))}
           required
+          className="w-full border border-gray-300 rounded px-3 py-2"
         >
-          <option value="">Select ServiceUser</option>
-          {serviceUsers.map((serviceUser) => (
-            <option key={serviceUser.id} value={serviceUser.id}>
-              {serviceUser.name}
+          <option value="">Select Service User</option>
+          {admissions.map((admission) => (
+            <option key={admission.id} value={admission.id}>
+              {admission.serviceUser.name}
             </option>
           ))}
         </select>
       </div>
       <div>
-        <label htmlFor="activityId">Activity:</label>
+        <label htmlFor="activityId" className="block font-medium">
+          Activity:
+        </label>
         <select
           name="activityId"
           id="activityId"
           value={activityId}
           onChange={(e) => setActivityId(Number(e.target.value))}
           required
+          className="w-full border border-gray-300 rounded px-3 py-2"
         >
           <option value="">Select Activity</option>
           {activities.map((activity) => (
@@ -80,9 +85,16 @@ const SessionForm = ({ serviceUsers, activities }: Props) => {
           ))}
         </select>
       </div>
-      <button type="submit">Start Session</button>
+      <button
+        type="submit"
+        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+      >
+        Start Session
+      </button>
     </form>
   );
 };
 
 export default SessionForm;
+
+// src/app/sessions/new/SessionForm.tsx
