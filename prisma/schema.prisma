@@ -13,35 +13,46 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Ward {
-  id       Int       @id @default(autoincrement())
-  name     String
-  serviceUsers ServiceUser[]
+model ServiceUser {
+  id          Int          @id @default(autoincrement())
+  nhsNumber   String       @unique
+  name        String
+  admissions  Admission[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime?    @updatedAt
 }
 
-model ServiceUser {
-  id       Int       @id @default(autoincrement())
-  name     String
-  ward     Ward      @relation(fields: [wardId], references: [id])
-  wardId   Int
-  sessions Session[]
-  status    String   @default("admitted") // "admitted" or "discharged"
-  createdAt DateTime @default(now())
-  updatedAt DateTime? @updatedAt
+model Admission {
+  id            Int          @id @default(autoincrement())
+  serviceUser   ServiceUser  @relation(fields: [serviceUserId], references: [id])
+  serviceUserId Int
+  ward          Ward         @relation(fields: [wardId], references: [id])
+  wardId        Int
+  admissionDate DateTime
+  dischargeDate DateTime?
+  sessions      Session[]
+}
+
+model Ward {
+  id          Int          @id @default(autoincrement())
+  name        String
+  admissions  Admission[]
 }
 
 model Activity {
-  id       Int       @id @default(autoincrement())
-  name     String
-  sessions Session[]
+  id         Int        @id @default(autoincrement())
+  name       String
+  sessions   Session[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime?  @updatedAt
 }
 
 model Session {
-  id         Int       @id @default(autoincrement())
-  serviceUser    ServiceUser   @relation(fields: [serviceUserId], references: [id])
-  serviceUserId  Int
-  activity   Activity  @relation(fields: [activityId], references: [id])
-  activityId Int
-  timeIn     DateTime
-  timeOut    DateTime?
+  id           Int         @id @default(autoincrement())
+  admission    Admission   @relation(fields: [admissionId], references: [id])
+  admissionId  Int
+  activity     Activity    @relation(fields: [activityId], references: [id])
+  activityId   Int
+  timeIn       DateTime   @default(now())
+  timeOut      DateTime?
 }
