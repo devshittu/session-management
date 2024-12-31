@@ -8,14 +8,13 @@ on:
     branches:
       - main
 env:
-  DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
-  DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
-  REPOSITORY_NAME: mediaapp
+  REPOSITORY_NAME: session-management
 
 jobs:
   build:
     name: Build and Push Docker Image
     runs-on: ubuntu-latest
+    environment: staging
 
     steps:
       - name: Checkout code
