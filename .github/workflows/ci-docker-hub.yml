@@ -21,7 +21,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
         with:
-          ref: staging  # Ensure the staging branch is checked out
+          ref: main  # Ensure the staging branch is checked out
 
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
