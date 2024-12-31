@@ -23,7 +23,7 @@ RUN if [ -f yarn.lock ]; then \
 
 # Copy Prisma schema and environment variables
 COPY prisma ./prisma
-COPY .env ./
+# COPY .env ./
 
 # Generate Prisma Client
 RUN npx prisma generate
