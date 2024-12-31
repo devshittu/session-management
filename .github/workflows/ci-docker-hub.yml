@@ -27,7 +27,7 @@ jobs:
       # Build and Push Backend
       - name: Build Backend Docker image
         run: |
-          docker build --platform linux/amd64  --no-cache -t ${{ secrets.DOCKER_HUB_USERNAME }}/${{env.REPOSITORY_NAME}}:actman-app-latest -f Dockerfile.prod .
+          docker build --platform linux/amd64  --no-cache -t ${{ secrets.DOCKER_HUB_USERNAME }}/${{env.REPOSITORY_NAME}}:actman-app-latest -f Dockerfile.dev .
 
       - name: Push Backend Docker image to Docker Hub
         run: |
