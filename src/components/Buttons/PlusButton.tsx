@@ -7,7 +7,10 @@ type PlusButtonProps = {
   onClick?: () => void;
 };
 
-export const PlusButton: React.FC<PlusButtonProps> = ({ size = 'md', onClick }) => {
+export const PlusButton: React.FC<PlusButtonProps> = ({
+  size = 'md',
+  onClick,
+}) => {
   const padding = size === 'lg' ? 'p-4' : 'p-3';
   const iconSize = size === 'lg' ? 24 : 20;
 

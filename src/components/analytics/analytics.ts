@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 // Minimal amplitude/posthog snippet. Replace with actual config.
 export function trackPageModeEvent(eventName: string) {

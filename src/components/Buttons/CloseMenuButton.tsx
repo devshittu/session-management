@@ -6,7 +6,9 @@ type CloseMenuButtonProps = {
   onClick: () => void;
 };
 
-export const CloseMenuButton: React.FC<CloseMenuButtonProps> = ({ onClick }) => (
+export const CloseMenuButton: React.FC<CloseMenuButtonProps> = ({
+  onClick,
+}) => (
   <button
     className="text-stone-800 justify-self-end sm:hidden"
     onClick={onClick}

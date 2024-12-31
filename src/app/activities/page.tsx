@@ -109,7 +109,6 @@
 //   );
 // }
 
-
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
 
@@ -124,7 +123,10 @@ export default async function ActivitiesPage() {
       </Link>
       <ul className="mt-4">
         {activities.map((activity) => (
-          <li key={activity.id} className="flex justify-between items-center mb-2">
+          <li
+            key={activity.id}
+            className="flex justify-between items-center mb-2"
+          >
             <span>{activity.name}</span>
             <div>
               <Link

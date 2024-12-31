@@ -15,7 +15,9 @@ type PinnedLearningsProps = {
   learnings: LearningProgress[];
 };
 
-export const PinnedLearnings: React.FC<PinnedLearningsProps> = ({ learnings }) => {
+export const PinnedLearnings: React.FC<PinnedLearningsProps> = ({
+  learnings,
+}) => {
   return (
     <div>
       <div className="flex items-center justify-between">

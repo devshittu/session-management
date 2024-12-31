@@ -130,7 +130,6 @@
 
 // export default InfiniteSessionsList;
 
-
 'use client';
 
 import { useSessions } from '@/hooks/useSessions';
@@ -144,10 +143,11 @@ import React, { useState } from 'react';
 const InfiniteSessionsList = () => {
   const [sortBy, setSortBy] = useState<string>('timeIn');
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
-  const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } = useSessions({
-    sortBy,
-    order,
-  });
+  const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } =
+    useSessions({
+      sortBy,
+      order,
+    });
   const router = useRouter();
 
   const handleEndSession = async (sessionId: number) => {
@@ -216,19 +216,28 @@ const InfiniteSessionsList = () => {
             {page.sessions.map((session) => (
               <div key={session.id} className="border-b p-4">
                 <p>
-                  <strong>Service User:</strong> {session.admission.serviceUser.name}
+                  <strong>Service User:</strong>{' '}
+                  {session.admission.serviceUser.name}
                 </p>
                 <p>
                   <strong>Activity:</strong> {session.activity.name}
                 </p>
                 <p>
-                  <strong>Time In:</strong> {new Date(session.timeIn).toLocaleString()}
+                  <strong>Time In:</strong>{' '}
+                  {new Date(session.timeIn).toLocaleString()}
                 </p>
                 <p>
-                  <strong>Time Out:</strong> {session.timeOut ? new Date(session.timeOut).toLocaleString() : 'In Progress'}
+                  <strong>Time Out:</strong>{' '}
+                  {session.timeOut
+                    ? new Date(session.timeOut).toLocaleString()
+                    : 'In Progress'}
                 </p>
                 <p>
-                  <strong>Elapsed Time:</strong> <ElapsedTime timeIn={session.timeIn} timeOut={session.timeOut} />
+                  <strong>Elapsed Time:</strong>{' '}
+                  <ElapsedTime
+                    timeIn={session.timeIn}
+                    timeOut={session.timeOut}
+                  />
                 </p>
                 {!session.timeOut && (
                   <button
@@ -251,7 +260,11 @@ const InfiniteSessionsList = () => {
           >
             {({ ref }) => (
               <div ref={ref} className="h-10 bg-gray-200 text-center">
-                {isFetchingNextPage ? <p>Loading more...</p> : <p>Load more...</p>}
+                {isFetchingNextPage ? (
+                  <p>Loading more...</p>
+                ) : (
+                  <p>Load more...</p>
+                )}
               </div>
             )}
           </InView>

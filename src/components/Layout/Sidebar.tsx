@@ -156,7 +156,9 @@ export const Sidebar: React.FC = () => {
                           className="flex items-center gap-3 px-3 py-2 hover:bg-black/10"
                           href={url}
                         >
-                          <span className={`block w-2 h-2 rounded-sm ${color}`}></span>
+                          <span
+                            className={`block w-2 h-2 rounded-sm ${color}`}
+                          ></span>
                           {label}
                         </a>
                       </li>

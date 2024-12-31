@@ -44,7 +44,10 @@ export default function EditActivityForm({ activity }: Props) {
           className="mt-1 block w-full border-gray-300 rounded-md"
         />
       </div>
-      <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
+      <button
+        type="submit"
+        className="bg-blue-500 text-white px-4 py-2 rounded"
+      >
         Update Activity
       </button>
     </form>

@@ -19,16 +19,20 @@ type VariantConfig = {
 
 const variants: Record<CalloutVariant, VariantConfig> = {
   1: {
-    className: 'lg:col-span-2 lg:grid-cols-2 bg-gradient-to-br from-green-300 to-yellow-100',
-    image: 'https://cdn3d.iconscout.com/3d/premium/thumb/abstract-shape-8079078-6656490.png?f=webp',
+    className:
+      'lg:col-span-2 lg:grid-cols-2 bg-gradient-to-br from-green-300 to-yellow-100',
+    image:
+      'https://cdn3d.iconscout.com/3d/premium/thumb/abstract-shape-8079078-6656490.png?f=webp',
   },
   2: {
     className: 'bg-gradient-to-br from-orange-300 to-yellow-100',
-    image: 'https://cdn3d.iconscout.com/3d/premium/thumb/abstract-shape-8079089-6656501.png?f=webp',
+    image:
+      'https://cdn3d.iconscout.com/3d/premium/thumb/abstract-shape-8079089-6656501.png?f=webp',
   },
   3: {
     className: 'bg-gradient-to-br from-red-300 to-yellow-100',
-    image: 'https://cdn3d.iconscout.com/3d/premium/thumb/abstract-shape-8085298-6656614.png?f=webp',
+    image:
+      'https://cdn3d.iconscout.com/3d/premium/thumb/abstract-shape-8085298-6656614.png?f=webp',
   },
 };
 

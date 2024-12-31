@@ -13,10 +13,14 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const { serviceUserId, wardId, admissionDate, dischargeDate } = await request.json();
+  const { serviceUserId, wardId, admissionDate, dischargeDate } =
+    await request.json();
 
   if (!serviceUserId || !wardId || !admissionDate) {
-    return NextResponse.json({ error: 'Required fields are missing' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Required fields are missing' },
+      { status: 400 },
+    );
   }
 
   const admission = await prisma.admission.create({

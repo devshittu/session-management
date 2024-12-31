@@ -7,7 +7,10 @@ type CollapsibleProps = {
   children: React.ReactNode;
 };
 
-export const Collapsible: React.FC<CollapsibleProps> = ({ trigger, children }) => {
+export const Collapsible: React.FC<CollapsibleProps> = ({
+  trigger,
+  children,
+}) => {
   const [open, setOpen] = React.useState(true);
 
   return (

@@ -40,7 +40,9 @@ export const useServiceUsers = ({
       if (groupByWard) {
         params.append('groupByWard', 'true');
       }
-      const response = await axios.get<ServiceUsersResponse>(`/api/serviceUsers?${params.toString()}`);
+      const response = await axios.get<ServiceUsersResponse>(
+        `/api/serviceUsers?${params.toString()}`,
+      );
       return response.data;
     },
     getNextPageParam: (lastPage) => {

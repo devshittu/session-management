@@ -19,12 +19,12 @@ export const AppProvider = ({ children, theme }: AppProviderProps) => {
 
   return (
     <>
-    {/* <ThemeProvider attribute="class" forcedTheme={theme || undefined}> */}
-      
-        {/* <ThemeProvider attribute="class" enableSystem={true} defaultTheme="light"> */}
-        <QueryClientProvider client={queryClient}>
-          {IS_DEVELOPMENT && <ReactQueryDevtools initialIsOpen={false} />}
-            <Suspense fallback={<Loading />}>{children}</Suspense>
+      {/* <ThemeProvider attribute="class" forcedTheme={theme || undefined}> */}
+
+      {/* <ThemeProvider attribute="class" enableSystem={true} defaultTheme="light"> */}
+      <QueryClientProvider client={queryClient}>
+        {IS_DEVELOPMENT && <ReactQueryDevtools initialIsOpen={false} />}
+        <Suspense fallback={<Loading />}>{children}</Suspense>
 
         {/* <Overlay /> */}
         {/* <PageMode />
@@ -33,9 +33,9 @@ export const AppProvider = ({ children, theme }: AppProviderProps) => {
         <DrawerMenu /> */}
 
         <ToastProvider />
-        </QueryClientProvider>
-        {/* <ConfettiEffect /> */}
-    {/* </ThemeProvider> */}
+      </QueryClientProvider>
+      {/* <ConfettiEffect /> */}
+      {/* </ThemeProvider> */}
     </>
   );
 };

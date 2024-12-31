@@ -59,7 +59,9 @@ const SessionsList = ({ sessions }: Props) => {
         <tbody className="text-gray-700">
           {sessions.map((session) => (
             <tr key={session.id} className="border-b hover:bg-gray-100">
-              <td className="py-3 px-4">{session.admission.serviceUser.name}</td>
+              <td className="py-3 px-4">
+                {session.admission.serviceUser.name}
+              </td>
               <td className="py-3 px-4">{session.activity.name}</td>
               <td className="py-3 px-4">
                 {new Date(session.timeIn).toLocaleString()}

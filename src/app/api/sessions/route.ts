@@ -92,7 +92,10 @@ export async function GET(request: Request) {
   // Define allowed sortBy options and map them to Prisma orderBy
   const allowedSortBy = ['timeIn', 'activityName', 'serviceUserName'];
   if (!allowedSortBy.includes(sortBy)) {
-    return NextResponse.json({ error: 'Invalid sortBy parameter' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Invalid sortBy parameter' },
+      { status: 400 },
+    );
   }
 
   // Map sortBy to Prisma orderBy
@@ -164,7 +167,9 @@ export async function GET(request: Request) {
           name: session.admission.ward.name,
         },
         startDate: session.admission.admissionDate.toISOString(),
-        endDate: session.admission.dischargeDate ? session.admission.dischargeDate.toISOString() : null,
+        endDate: session.admission.dischargeDate
+          ? session.admission.dischargeDate.toISOString()
+          : null,
       },
       activity: {
         id: session.activity.id,
@@ -182,10 +187,12 @@ export async function GET(request: Request) {
     });
   } catch (error) {
     console.error('Failed to fetch sessions:', error);
-    return NextResponse.json({ error: 'Failed to fetch sessions' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch sessions' },
+      { status: 500 },
+    );
   }
 }
-
 
 export async function POST(request: Request) {
   const data = await request.json();

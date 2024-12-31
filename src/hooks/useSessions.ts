@@ -1,4 +1,3 @@
-
 // import { useInfiniteQuery } from '@tanstack/react-query';
 // import axios from 'axios';
 // import { Session } from '@/types/serviceUser';
@@ -32,7 +31,6 @@
 //     },
 //   });
 
-
 import { useInfiniteQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { Session } from '@/types/serviceUser';
@@ -49,9 +47,14 @@ type FetchSessionsParams = {
   order: 'asc' | 'desc';
 };
 
-const fetchSessions = async ({ pageParam = 1, queryKey }: any): Promise<SessionsResponse> => {
+const fetchSessions = async ({
+  pageParam = 1,
+  queryKey,
+}: any): Promise<SessionsResponse> => {
   const [, { sortBy, order }] = queryKey;
-  const { data } = await axios.get<SessionsResponse>(`/api/sessions?page=${pageParam}&pageSize=20&sortBy=${sortBy}&order=${order}`);
+  const { data } = await axios.get<SessionsResponse>(
+    `/api/sessions?page=${pageParam}&pageSize=20&sortBy=${sortBy}&order=${order}`,
+  );
   return data;
 };
 

@@ -1,5 +1,3 @@
-
-
 import { prisma } from '@/lib/prisma';
 import { ServiceUser, ServiceUserStatus } from '@/types/serviceUser';
 import EditServiceUserForm from './EditServiceUserForm';
@@ -41,6 +39,5 @@ export default async function EditServiceUserPage({ params }: Params) {
     </div>
   );
 }
-
 
 // src/app/serviceUsers/[id]/edit/page.tsx

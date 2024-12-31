@@ -1,7 +1,6 @@
 // import { NextResponse } from 'next/server';
 // import { prisma } from '@/lib/prisma';
 
-
 // export async function GET(request: Request) {
 //   const url = new URL(request.url);
 //   const status = url.searchParams.get('status') || undefined;
@@ -113,7 +112,9 @@ export async function GET(request: Request) {
     }
 
     // Serialize dates to ISO strings
-    const serializedServiceUsers = JSON.parse(JSON.stringify(groupedServiceUsers));
+    const serializedServiceUsers = JSON.parse(
+      JSON.stringify(groupedServiceUsers),
+    );
 
     return NextResponse.json({
       serviceUsers: serializedServiceUsers,
@@ -123,10 +124,11 @@ export async function GET(request: Request) {
     });
   } catch (error) {
     console.error('Failed to fetch service users:', error);
-    return NextResponse.json({ error: 'Failed to fetch service users' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch service users' },
+      { status: 500 },
+    );
   }
 }
-
-
 
 // src/app/api/serviceUsers/route.ts

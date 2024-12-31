@@ -15,7 +15,9 @@ export default function DeleteActivityForm({ activity }: Props) {
   const router = useRouter();
 
   const handleDelete = async () => {
-    const confirmed = confirm(`Are you sure you want to delete ${activity.name}?`);
+    const confirmed = confirm(
+      `Are you sure you want to delete ${activity.name}?`,
+    );
 
     if (confirmed) {
       const res = await fetch(`/api/activities/${activity.id}`, {

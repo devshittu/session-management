@@ -21,7 +21,9 @@ export const Today: React.FC<TodayProps> = () => {
     <section className="p-8 lg:p-10 bg-white grid gap-12 content-start">
       <header className="flex items-center justify-between">
         <div>
-          <h1 className="font-regular text-stone-800 text-xl">{"Today's Plan"}</h1>
+          <h1 className="font-regular text-stone-800 text-xl">
+            {"Today's Plan"}
+          </h1>
           <p>June 14th, 2022</p>
         </div>
         <PlusButton size="lg" />

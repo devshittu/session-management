@@ -32,37 +32,44 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-          <AppProvider>
-        <nav className="bg-gray-800 p-4">
-          <div className="container mx-auto flex space-x-4">
+        <AppProvider>
+          <nav className="bg-gray-800 p-4">
+            <div className="container mx-auto flex space-x-4">
+              <Link href="/" className="text-white hover:text-gray-300">
+                Home
+              </Link>
 
-            <Link href="/" className="text-white hover:text-gray-300">
-              Home
-            </Link>
-
-            <Link href="/sessions" className="text-white hover:text-gray-300">
-              Sessions
-            </Link>
-            <Link href="/serviceUsers" className="text-white hover:text-gray-300">
-              ServiceUsers
-            </Link>
-            <Link href="/activities" className="text-white hover:text-gray-300">
-              Activities
-            </Link>
-            <Link href="/reports" className="text-white hover:text-gray-300">
-              Reports
-            </Link>
-            <Link href="/feel" className="text-white hover:text-gray-300">
-              Look & Feel
-            </Link>
-            <Link href="/playground/box" className="text-white hover:text-gray-300">
-              Playground Box
-            </Link>
-          </div>
-        </nav>
-        <main className="container mx-auto p-4">{children}</main>
-
-          </AppProvider>
+              <Link href="/sessions" className="text-white hover:text-gray-300">
+                Sessions
+              </Link>
+              <Link
+                href="/serviceUsers"
+                className="text-white hover:text-gray-300"
+              >
+                ServiceUsers
+              </Link>
+              <Link
+                href="/activities"
+                className="text-white hover:text-gray-300"
+              >
+                Activities
+              </Link>
+              <Link href="/reports" className="text-white hover:text-gray-300">
+                Reports
+              </Link>
+              <Link href="/feel" className="text-white hover:text-gray-300">
+                Look & Feel
+              </Link>
+              <Link
+                href="/playground/box"
+                className="text-white hover:text-gray-300"
+              >
+                Playground Box
+              </Link>
+            </div>
+          </nav>
+          <main className="container mx-auto p-4">{children}</main>
+        </AppProvider>
       </body>
     </html>
   );

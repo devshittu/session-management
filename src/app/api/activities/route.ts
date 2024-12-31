@@ -1,5 +1,3 @@
-
-
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
@@ -16,7 +14,6 @@ import { prisma } from '@/lib/prisma';
 //     return NextResponse.json({ error: 'Failed to fetch activities' }, { status: 500 });
 //   }
 // }
-
 
 export async function GET() {
   const activities = await prisma.activity.findMany();
@@ -80,7 +77,10 @@ export async function PUT(request: Request) {
   const { id, name } = body;
 
   if (!id || !name) {
-    return NextResponse.json({ error: 'Activity ID and name are required.' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Activity ID and name are required.' },
+      { status: 400 },
+    );
   }
 
   const updatedActivity = await prisma.activity.update({
@@ -96,13 +96,15 @@ export async function DELETE(request: Request) {
   const { id } = body;
 
   if (!id) {
-    return NextResponse.json({ error: 'Activity ID is required.' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Activity ID is required.' },
+      { status: 400 },
+    );
   }
 
   await prisma.activity.delete({ where: { id } });
 
   return NextResponse.json({ message: 'Activity deleted successfully.' });
 }
-
 
 // src/app/api/activities/route.ts

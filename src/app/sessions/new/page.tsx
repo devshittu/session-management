@@ -12,13 +12,15 @@ type Activity = {
 };
 
 export default async function NewSessionPage() {
-  const [admissions, activities]: [Admission[], Activity[]] = await Promise.all([
-    prisma.admission.findMany({
-      where: { dischargeDate: null }, // Fetch only active admissions
-      include: { serviceUser: true },
-    }),
-    prisma.activity.findMany(),
-  ]);
+  const [admissions, activities]: [Admission[], Activity[]] = await Promise.all(
+    [
+      prisma.admission.findMany({
+        where: { dischargeDate: null }, // Fetch only active admissions
+        include: { serviceUser: true },
+      }),
+      prisma.activity.findMany(),
+    ],
+  );
 
   return (
     <div>

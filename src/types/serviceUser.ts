@@ -34,6 +34,4 @@ export type ServiceUser = {
   admissions: Admission[]; // A service user can have multiple admissions
 };
 
-
 // src/types/serviceUser.ts
-
