@@ -54,7 +54,7 @@ services:
     container_name: frontend-app
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile.stg
 
     image: devshittu/session-management:actman-app-latest
     # Set environment variables directly in the docker-compose file
