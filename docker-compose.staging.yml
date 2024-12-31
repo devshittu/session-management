@@ -1,19 +1,70 @@
 services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx-proxy
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - letsencrypt-certs:/etc/nginx/certs
+      - letsencrypt-vhost-d:/etc/nginx/vhost.d
+      - letsencrypt-html:/usr/share/nginx/html
+      - static_volume:/home/app/web/staticfiles # Mount static files
+      - media_volume:/home/app/web/mediafiles
+      - ./nginx-proxy/static.conf:/etc/nginx/vhost.d/default_location
+    networks:
+      - my_media_network
+
+  letsencrypt:
+    image: nginxproxy/acme-companion
+    container_name: letsencrypt
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - letsencrypt-certs:/etc/nginx/certs
+      - letsencrypt-vhost-d:/etc/nginx/vhost.d
+      - letsencrypt-html:/usr/share/nginx/html
+      - ./nginx-proxy/static.conf:/etc/nginx/vhost.d/default_location
+      - static_volume:/home/app/web/staticfiles
+    environment:
+      - DEFAULT_EMAIL=devshittu@gmail.com
+      - NGINX_PROXY_CONTAINER=nginx-proxy
+      - DEBUG=true
+      # - ACME_CA_URI=https://acme-staging-v02.api.letsencrypt.org/directory # Use Let's Encrypt staging
+    networks:
+      - my_media_network
+
+  duckdns:
+    image: lscr.io/linuxserver/duckdns:latest
+    container_name: duckdns
+    network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - SUBDOMAINS=${SUBDOMAINS}
+      - TOKEN=${DUCKDNS_TOKEN}
+      - UPDATE_IP=ipv4
+      - LOG_FILE=false
+    volumes:
+      - /path/to/duckdns/config:/config
+    restart: unless-stopped
+
   frontend-app:
     container_name: frontend-app
     build:
       context: .
       dockerfile: Dockerfile.dev
 
-    image: devshittu/mediaapp:frontend-app-latest
+    image: devshittu/session-management:actman-app-latest
     # Set environment variables directly in the docker-compose file
     environment:
       # ENV_VARIABLE: ${ENV_VARIABLE}
       # NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE}
       - NODE_ENV=development
-      - VIRTUAL_HOST=app.staging.gong.ng,www.app.staging.gong.ng
-      - LETSENCRYPT_HOST=app.staging.gong.ng,www.app.staging.gong.ng
-      - LETSENCRYPT_EMAIL=devshittu@gmail.com
+      - VIRTUAL_HOST=${VIRTUAL_HOST}
+      - LETSENCRYPT_HOST=${LETSENCRYPT_HOST}
+      - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
 
     # Set envrionment variables based on the .env file
     env_file:
