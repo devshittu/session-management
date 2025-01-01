@@ -18,10 +18,12 @@ export async function GET(
   const serviceUser = await prisma.serviceUser.findUnique({
     where: { id: serviceUserId },
     include: {
-      ward: true,
+       
+      // ward: true,
       admissions: {
         include: {
           sessions: true,
+          ward: true,
         },
       },
     },

@@ -15,6 +15,7 @@
     "jsx": "preserve",
     "incremental": true,
     "baseUrl": ".",
+    "types": ["@prisma/client"],
     "plugins": [
       {
         "name": "next"
