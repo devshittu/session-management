@@ -1,70 +1,74 @@
-// import { useInfiniteQuery } from '@tanstack/react-query';
-// import axios from 'axios';
-// import { Session } from '@/types/serviceUser';
-
-// type SessionsResponse = {
-//   sessions: Session[];
-//   total: number;
-//   page: number;
-//   pageSize: number;
-// };
-
-// type FetchSessionsParams = {
-//   sortBy: string;
-//   order: 'asc' | 'desc';
-// };
-
-// const fetchSessions = async ({ pageParam = 1, queryKey }: any): Promise<SessionsResponse> => {
-//   const [, { sortBy, order }] = queryKey;
-//   const { data } = await axios.get<SessionsResponse>(`/api/sessions?page=${pageParam}&pageSize=20&sortBy=${sortBy}&order=${order}`);
-//   return data;
-// };
-
-// export const useSessions = ({ sortBy, order }: FetchSessionsParams) =>
-//   useInfiniteQuery<SessionsResponse, Error>({
-//     queryKey: ['sessions', { sortBy, order }],
-//     queryFn: fetchSessions,
-//     getNextPageParam: (lastPage) => {
-//       const { page, pageSize, total } = lastPage;
-//       const maxPage = Math.ceil(total / pageSize);
-//       return page < maxPage ? page + 1 : undefined;
-//     },
-//   });
-
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, QueryFunctionContext } from '@tanstack/react-query';
 import axios from 'axios';
-import { Session } from '@/types/serviceUser';
-
-type SessionsResponse = {
-  sessions: Session[];
-  total: number;
-  page: number;
-  pageSize: number;
-};
+import {
+  Session,
+  SessionsResponse,
+  GroupedResponse,
+} from '@/types/serviceUser';
 
 type FetchSessionsParams = {
   sortBy: string;
   order: 'asc' | 'desc';
+  groupBy?: string; // e.g. "timeIn" or "admissionId" or "none"
 };
 
-const fetchSessions = async ({
-  pageParam = 1,
-  queryKey,
-}: any): Promise<SessionsResponse> => {
-  const [, { sortBy, order }] = queryKey;
-  const { data } = await axios.get<SessionsResponse>(
-    `/api/sessions?page=${pageParam}&pageSize=20&sortBy=${sortBy}&order=${order}`,
+// The return type can be EITHER SessionsResponse or GroupedResponse
+// We'll store them in a union if you want to unify them
+type SessionsData = SessionsResponse | GroupedResponse;
+
+type SessionsQueryKey = ['sessions', FetchSessionsParams];
+
+const fetchSessions = async (
+  context: QueryFunctionContext<SessionsQueryKey, number>,
+): Promise<SessionsData> => {
+  const { pageParam = 1, queryKey } = context;
+  const [, { sortBy, order, groupBy }] = queryKey;
+
+  // Build query string
+  const params = new URLSearchParams();
+  params.set('page', pageParam.toString());
+  params.set('pageSize', '20');
+  params.set('sortBy', sortBy);
+  params.set('order', order);
+  if (groupBy && groupBy !== 'none') {
+    params.set('groupBy', groupBy);
+  }
+
+  const response = await axios.get<SessionsData>(
+    `/api/sessions?${params.toString()}`,
   );
-  return data;
+  return response.data;
 };
 
-export const useSessions = ({ sortBy, order }: FetchSessionsParams) =>
-  useInfiniteQuery<SessionsResponse, Error>({
-    queryKey: ['sessions', { sortBy, order }],
+export const useSessions = ({
+  sortBy,
+  order,
+  groupBy = 'none',
+}: FetchSessionsParams) =>
+  useInfiniteQuery<
+    SessionsData, // TData
+    Error, // TError
+    SessionsData, // TQueryData
+    SessionsQueryKey, // TQueryKey
+    number // TPageParam
+  >({
+    queryKey: ['sessions', { sortBy, order, groupBy }],
     queryFn: fetchSessions,
+    initialPageParam: 1,
     getNextPageParam: (lastPage) => {
-      const { page, pageSize, total } = lastPage;
-      const maxPage = Math.ceil(total / pageSize);
-      return page < maxPage ? page + 1 : undefined;
+      // Check if lastPage is aggregator or normal
+      if ('groupedData' in lastPage) {
+        // aggregator approach
+        // we only have pageParam => no concept of "total pages"
+        // you could return undefined or implement your own aggregator
+        return lastPage.pageParam + 1; // or undefined if no more pages
+      } else {
+        // normal approach => SessionsResponse
+        const { page, pageSize, total } = lastPage;
+        const maxPage = Math.ceil(total / pageSize);
+        return page < maxPage ? page + 1 : undefined;
+      }
     },
   });
+
+// src/hooks/useSessions.ts
