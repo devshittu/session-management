@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { ServiceUserStatus } from '@/types/serviceUser';
 
 export async function GET(
   request: Request,
@@ -18,12 +17,10 @@ export async function GET(
   const serviceUser = await prisma.serviceUser.findUnique({
     where: { id: serviceUserId },
     include: {
-       
-      // ward: true,
       admissions: {
         include: {
           sessions: true,
-          ward: true,
+          ward: true, // `ward` is included through `Admission`
         },
       },
     },
@@ -36,13 +33,13 @@ export async function GET(
     );
   }
 
-  const serializedserviceUser = {
+  const serializedServiceUser = {
     ...serviceUser,
     createdAt: serviceUser.createdAt.toISOString(),
     updatedAt: serviceUser.updatedAt?.toISOString() || null,
   };
 
-  return NextResponse.json(serializedserviceUser);
+  return NextResponse.json(serializedServiceUser);
 }
 
 export async function PUT(
@@ -59,22 +56,21 @@ export async function PUT(
   }
 
   const body = await request.json();
-  const { name, wardId } = body;
+  const { name } = body; // `wardId` removed, since it's not a direct property of `ServiceUser`
 
   try {
-    const updatedserviceUser = await prisma.serviceUser.update({
+    const updatedServiceUser = await prisma.serviceUser.update({
       where: { id: serviceUserId },
-      data: { name, wardId },
-      include: { ward: true },
+      data: { name }, // Only updating fields that exist on `ServiceUser`
     });
 
-    const serializedserviceUser = {
-      ...updatedserviceUser,
-      createdAt: updatedserviceUser.createdAt.toISOString(),
-      updatedAt: updatedserviceUser.updatedAt?.toISOString() || null,
+    const serializedServiceUser = {
+      ...updatedServiceUser,
+      createdAt: updatedServiceUser.createdAt.toISOString(),
+      updatedAt: updatedServiceUser.updatedAt?.toISOString() || null,
     };
 
-    return NextResponse.json(serializedserviceUser);
+    return NextResponse.json(serializedServiceUser);
   } catch (error) {
     console.error(error);
     return NextResponse.json(
@@ -113,5 +109,4 @@ export async function DELETE(
     );
   }
 }
-
 // src/app/api/serviceUsers/[id]/route.ts
