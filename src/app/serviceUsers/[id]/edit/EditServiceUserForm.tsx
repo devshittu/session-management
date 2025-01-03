@@ -2,7 +2,7 @@
 
 import { useState, FormEvent, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ServiceUser, ServiceUserStatus } from '@/types/serviceUser';
+import { ServiceUser } from '@/types/serviceUser';
 
 type Props = {
   serviceUser: ServiceUser;
@@ -11,8 +11,12 @@ type Props = {
 const EditServiceUserForm: React.FC<Props> = ({ serviceUser }) => {
   const router = useRouter();
   const [name, setName] = useState(serviceUser.name);
-  const [wardId, setWardId] = useState<number | ''>(serviceUser.wardId);
-  const [status, setStatus] = useState<ServiceUserStatus>(serviceUser.status);
+  const [wardId, setWardId] = useState<number | ''>(
+    serviceUser.admissions?.[0]?.wardId || '',
+  );
+  const [status, setStatus] = useState<string>(
+    serviceUser.admissions?.[0]?.dischargeDate ? 'discharged' : 'admitted',
+  );
   const [wards, setWards] = useState<{ id: number; name: string }[]>([]);
 
   useEffect(() => {
@@ -39,7 +43,7 @@ const EditServiceUserForm: React.FC<Props> = ({ serviceUser }) => {
     const res = await fetch(`/api/serviceUsers/${serviceUser.id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, wardId, status }),
+      body: JSON.stringify({ name, wardId }),
     });
 
     if (res.ok) {
@@ -100,16 +104,13 @@ const EditServiceUserForm: React.FC<Props> = ({ serviceUser }) => {
         >
           Status:
         </label>
-        <select
+        <input
+          type="text"
           id="status"
           value={status}
-          onChange={(e) => setStatus(e.target.value as ServiceUserStatus)}
-          required
-          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-        >
-          <option value="admitted">Admitted</option>
-          <option value="discharged">Discharged</option>
-        </select>
+          readOnly
+          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 bg-gray-100"
+        />
       </div>
       <button
         type="submit"
