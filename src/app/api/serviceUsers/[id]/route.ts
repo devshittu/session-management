@@ -40,7 +40,6 @@ export async function GET(request: Request) {
   return NextResponse.json(serializedServiceUser);
 }
 
-
 export async function PUT(request: Request) {
   const url = new URL(request.url);
   const serviceUserId = parseInt(url.searchParams.get('id') || '', 10);
@@ -76,7 +75,6 @@ export async function PUT(request: Request) {
     );
   }
 }
-
 
 export async function DELETE(request: Request) {
   const url = new URL(request.url);
