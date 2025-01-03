@@ -26,8 +26,11 @@ export default function CreateActivityForm() {
   return (
     <form onSubmit={handleSubmit}>
       <div className="mb-4">
-        <label className="block text-sm font-medium">Name</label>
+        <label htmlFor="activity-name" className="block text-sm font-medium">
+          Name
+        </label>
         <input
+          id="activity-name"
           type="text"
           required
           value={name}

@@ -1,4 +1,5 @@
 // src/components/Avatar.tsx
+import Image from 'next/image';
 import React from 'react';
 
 type AvatarProps = {
@@ -14,7 +15,7 @@ export const Avatar: React.FC<AvatarProps> = ({ src, size = 'md' }) => {
   };
 
   return (
-    <img
+    <Image
       className={`relative rounded-full border-2 border-white saturate-0 ${sizes[size]}`}
       src={src}
       width="256"

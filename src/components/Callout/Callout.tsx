@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import React from 'react';
 
 type CalloutVariant = 1 | 2 | 3;
@@ -59,7 +60,7 @@ export const Callout: React.FC<CalloutProps> = ({
           </a>
         )}
       </div>
-      <img
+      <Image
         className="ml-auto mt-auto object-left-top object-none max-w-64 max-h-64"
         src={image}
         width="300"
