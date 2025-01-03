@@ -16,7 +16,12 @@ export default async function EditServiceUserPage({ params }: Params) {
   const serviceUser = await prisma.serviceUser.findUnique({
     where: { id: serviceUserId },
     include: {
-      ward: true,
+      admissions: {
+        include: {
+          sessions: true,
+          ward: true,
+        },
+      },
     },
   });
 
@@ -24,12 +29,29 @@ export default async function EditServiceUserPage({ params }: Params) {
     return <p>ServiceUser not found.</p>;
   }
 
+  // const serializedServiceUser: ServiceUser = {
+  //   ...serviceUser,
+  //   createdAt: serviceUser.createdAt.toISOString(),
+  //   updatedAt: serviceUser.updatedAt?.toISOString() || null,
+  //   sessions: [],
+  //   status: serviceUser.status as ServiceUserStatus,
+  // };
   const serializedServiceUser: ServiceUser = {
     ...serviceUser,
     createdAt: serviceUser.createdAt.toISOString(),
     updatedAt: serviceUser.updatedAt?.toISOString() || null,
-    sessions: [],
-    status: serviceUser.status as ServiceUserStatus,
+    admissions: serviceUser.admissions?.map((admission) => ({
+      ...admission,
+      admissionDate: admission.admissionDate.toISOString(),
+      dischargeDate: admission.dischargeDate?.toISOString() || null,
+      serviceUser: {
+        id: serviceUser.id,
+        nhsNumber: serviceUser.nhsNumber,
+        name: serviceUser.name,
+        createdAt: serviceUser.createdAt.toISOString(),
+        updatedAt: serviceUser.updatedAt?.toISOString() || null,
+      },
+    })),
   };
 
   return (
