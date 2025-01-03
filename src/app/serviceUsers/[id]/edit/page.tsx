@@ -2,13 +2,14 @@ import { prisma } from '@/lib/prisma';
 import { ServiceUser, ServiceUserStatus } from '@/types/serviceUser';
 import EditServiceUserForm from './EditServiceUserForm';
 
-type Params = {
-  params: { id: string };
+type RouteParams = {
+  params: Promise<{ id: string }>;
 };
 
-export default async function EditServiceUserPage({ params }: Params) {
-  const serviceUserId = parseInt(params.id);
-
+export default async function EditServiceUserPage({ params }: RouteParams) {
+  // 1) Destructure and await the promised params
+  const { id } = await params;
+  const serviceUserId = parseInt(id, 10);
   if (isNaN(serviceUserId)) {
     return <p>Invalid serviceUser ID.</p>;
   }
