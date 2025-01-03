@@ -2,7 +2,10 @@
 
 import React from 'react';
 import { PinnedTaskList } from './components/PinnedTaskList';
-import { PinnedLearnings } from './components/PinnedLearnings';
+import {
+  LearningProgress,
+  PinnedLearnings,
+} from './components/PinnedLearnings';
 import { NumberIcon } from '@/components/Icons/NumberIcon';
 import { AlertIcon } from '@/components/Icons/AlertIcon';
 import { CheckIcon } from '@/components/Icons/CheckIcon';
@@ -47,7 +50,7 @@ export const Pinned: React.FC<PinnedProps> = () => {
     },
   ];
 
-  const learnings = [
+  const learnings: LearningProgress[] = [
     {
       title: 'Viruses',
       progress: '96%',
