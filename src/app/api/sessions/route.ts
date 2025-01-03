@@ -1,68 +1,87 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
+
+  // 1. Pagination
   const page = parseInt(searchParams.get('page') || '1', 10);
   const pageSize = parseInt(searchParams.get('pageSize') || '20', 10);
   const skip = (page - 1) * pageSize;
 
-  const sortBy = searchParams.get('sortBy') || 'timeIn'; // default sort
-  const order = searchParams.get('order') || 'asc'; // default order
-  const groupBy = searchParams.get('groupBy'); // e.g., 'activityId'
+  // 2. Sorting & Potential Grouping
+  const sortBy = searchParams.get('sortBy') || 'timeIn';
+  const order = (searchParams.get('order') || 'asc') as 'asc' | 'desc';
+  const groupBy = searchParams.get('groupBy'); // e.g., "timeIn"
 
-  // Define allowed sortBy options and map them to Prisma orderBy
-  const allowedSortBy = ['timeIn', 'activityName', 'serviceUserName'];
-  if (!allowedSortBy.includes(sortBy)) {
+  // Allowed scalar fields for groupBy
+  const allowedFields: Prisma.SessionScalarFieldEnum[] = [
+    'id',
+    'admissionId',
+    'activityId',
+    'timeIn',
+    'timeOut',
+  ];
+
+  // Validate groupBy
+  if (
+    groupBy &&
+    !allowedFields.includes(groupBy as Prisma.SessionScalarFieldEnum)
+  ) {
     return NextResponse.json(
-      { error: 'Invalid sortBy parameter' },
+      { error: `Invalid groupBy: ${groupBy}` },
       { status: 400 },
     );
   }
 
-  // Map sortBy to Prisma orderBy
-  let orderBy: any = {};
+  // Build orderBy logic
+  let orderByClause: Prisma.SessionOrderByWithRelationInput = {};
   switch (sortBy) {
     case 'timeIn':
-      orderBy = { timeIn: order };
+      orderByClause = { timeIn: order };
       break;
     case 'activityName':
-      orderBy = {
-        activity: {
-          name: order,
-        },
-      };
+      orderByClause = { activity: { name: order } };
       break;
     case 'serviceUserName':
-      orderBy = {
-        admission: {
-          serviceUser: {
-            name: order,
-          },
-        },
-      };
+      orderByClause = { admission: { serviceUser: { name: order } } };
       break;
     default:
-      orderBy = { timeIn: order }; // fallback
+      orderByClause = { timeIn: order };
       break;
   }
 
   try {
     if (groupBy) {
-      // Implement groupBy logic if needed
-      const groupedSessions = await prisma.session.groupBy({
-        by: [groupBy],
+      // 3. groupBy approach
+      // @ts-ignore
+      const aggregator = await prisma.session.groupBy({
+        by: [groupBy as Prisma.SessionScalarFieldEnum],
         _count: { _all: true },
-        orderBy: { [groupBy]: order },
+        orderBy: [{ [groupBy]: order }], // Ensure orderBy fields are also in by
+        skip,
+        take: pageSize,
       });
-      return NextResponse.json(groupedSessions);
+
+      // Return aggregator array as shape => { groupedData, pageParam }
+      // @ts-ignore
+      const groupedData = aggregator.map((item) => ({
+        ...item,
+      }));
+
+      return NextResponse.json({
+        groupedData,
+        pageParam: page,
+      });
     }
 
+    // 4. Normal approach => findMany
     const [sessions, total] = await Promise.all([
       prisma.session.findMany({
         skip,
         take: pageSize,
-        orderBy: orderBy,
+        orderBy: orderByClause,
         include: {
           admission: {
             include: {
@@ -76,33 +95,9 @@ export async function GET(request: Request) {
       prisma.session.count(),
     ]);
 
-    const serializedSessions = sessions.map((session) => ({
-      id: session.id,
-      admission: {
-        id: session.admission.id,
-        serviceUser: {
-          id: session.admission.serviceUser.id,
-          name: session.admission.serviceUser.name,
-        },
-        ward: {
-          id: session.admission.ward.id,
-          name: session.admission.ward.name,
-        },
-        startDate: session.admission.admissionDate.toISOString(),
-        endDate: session.admission.dischargeDate
-          ? session.admission.dischargeDate.toISOString()
-          : null,
-      },
-      activity: {
-        id: session.activity.id,
-        name: session.activity.name,
-      },
-      timeIn: session.timeIn.toISOString(),
-      timeOut: session.timeOut ? session.timeOut.toISOString() : null,
-    }));
-
+    // Return a SessionsResponse shape
     return NextResponse.json({
-      sessions: serializedSessions,
+      sessions,
       total,
       page,
       pageSize,
