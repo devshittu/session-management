@@ -131,7 +131,7 @@ const ServiceUsersList: React.FC = () => {
               {data?.pages?.map((page, pageIndex) => (
                 <React.Fragment key={pageIndex}>
                   {page.serviceUsers.map((user: ServiceUser) => {
-                    {/* @ts-ignore */}
+                    // @ts-ignore
                     const latestAdmission = user.admissions[0];
                     const wardName = latestAdmission?.ward?.name || 'No Ward';
                     const isAdmitted =
