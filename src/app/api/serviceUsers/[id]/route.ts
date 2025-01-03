@@ -1,11 +1,9 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } },
-) {
-  const serviceUserId = parseInt(params.id);
+export async function GET(request: Request) {
+  const url = new URL(request.url);
+  const serviceUserId = parseInt(url.searchParams.get('id') || '', 10);
 
   if (isNaN(serviceUserId)) {
     return NextResponse.json(
@@ -42,11 +40,10 @@ export async function GET(
   return NextResponse.json(serializedServiceUser);
 }
 
-export async function PUT(
-  request: Request,
-  { params }: { params: { id: string } },
-) {
-  const serviceUserId = parseInt(params.id);
+
+export async function PUT(request: Request) {
+  const url = new URL(request.url);
+  const serviceUserId = parseInt(url.searchParams.get('id') || '', 10);
 
   if (isNaN(serviceUserId)) {
     return NextResponse.json(
@@ -80,11 +77,10 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } },
-) {
-  const serviceUserId = parseInt(params.id);
+
+export async function DELETE(request: Request) {
+  const url = new URL(request.url);
+  const serviceUserId = parseInt(url.searchParams.get('id') || '', 10);
 
   if (isNaN(serviceUserId)) {
     return NextResponse.json(
