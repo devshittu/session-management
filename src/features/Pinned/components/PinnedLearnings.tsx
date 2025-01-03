@@ -4,7 +4,7 @@ import React from 'react';
 import { ProgressCard } from './ProgressCard';
 import { MoreIcon } from '../../../components/Icons/MoreIcon';
 
-type LearningProgress = {
+export type LearningProgress = {
   title: string;
   progress: string;
   icon: React.ReactNode;
