@@ -56,3 +56,5 @@ model Session {
   timeIn       DateTime   @default(now())
   timeOut      DateTime?
 }
+
+// prisma/schema.prisma
