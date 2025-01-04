@@ -43,9 +43,10 @@ jobs:
           echo "LETSENCRYPT_HOST=${{ secrets.LETSENCRYPT_HOST }}" >> .env.docker-compose
           echo "LETSENCRYPT_EMAIL=${{ secrets.LETSENCRYPT_EMAIL }}" >> .env.docker-compose
           echo "DEFAULT_EMAIL=${{ secrets.DEFAULT_EMAIL }}" >> .env.docker-compose
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env.docker-compose
 
-      # - name: Print .env.docker-compose for debugging
-      #   run: cat .env.docker-compose
+      - name: Print .env.docker-compose for debugging
+        run: cat .env.docker-compose
 
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_HUB_TOKEN }}" | sudo docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
@@ -63,7 +64,7 @@ jobs:
       # Deploy DuckDNS service using Docker Compose
       - name: Deploy DuckDNS
         run: |
-          docker compose -f docker-compose.staging.yml up -d
+          docker compose  --env-file .env.docker-compose -f docker-compose.staging.yml up -d
         env:
           SUBDOMAINS: ${{ secrets.SUBDOMAINS }}
           DUCKDNS_TOKEN: ${{ secrets.DUCKDNS_TOKEN }}
