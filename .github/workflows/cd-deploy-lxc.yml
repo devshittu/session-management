@@ -53,7 +53,7 @@ jobs:
           fi
       - name: Pull Docker image
         run: |
-          sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/mediaapp:tahoe-ui-latest
+          sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/session-management:actman-app-latest
 
         
       # Deploy DuckDNS service using Docker Compose
