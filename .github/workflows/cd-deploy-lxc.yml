@@ -24,7 +24,7 @@ jobs:
 
     steps:
       - name: Fix permissions before checkout
-        run: sudo chown -R $USER:$USER /home/mediavmuser/action-runners/frontend/_work/tahoe-ui/
+        run: sudo chown -R $USER:$USER /home/mediavmuser/action-runners/session-management/_work/
 
       - name: Checkout code
         uses: actions/checkout@v2
