@@ -15,6 +15,14 @@ services:
       - ./nginx-proxy/static.conf:/etc/nginx/vhost.d/default_location
     networks:
       - my_media_network
+    env_file:
+      - .env.docker-compose
+    environment:
+      # Fallback if needed:
+      - DEFAULT_EMAIL=${DEFAULT_EMAIL}
+      - VIRTUAL_HOST=${VIRTUAL_HOST}
+      - LETSENCRYPT_HOST=${LETSENCRYPT_HOST}
+      - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
 
   letsencrypt:
     image: nginxproxy/acme-companion
@@ -26,13 +34,14 @@ services:
       - letsencrypt-html:/usr/share/nginx/html
       - ./nginx-proxy/static.conf:/etc/nginx/vhost.d/default_location
       - static_volume:/home/app/web/staticfiles
+    env_file:
+      - .env.docker-compose
     environment:
       - DEFAULT_EMAIL=${DEFAULT_EMAIL}
       - NGINX_PROXY_CONTAINER=nginx-proxy
       - DEBUG=true
       # - ACME_CA_URI=https://acme-staging-v02.api.letsencrypt.org/directory # Use Let's Encrypt staging
-    env_file:
-      - .env.docker-compose
+
     networks:
       - my_media_network
 
@@ -49,7 +58,8 @@ services:
       - UPDATE_IP=ipv4
       - LOG_FILE=false
     volumes:
-      - /path/to/duckdns/config:/config
+      - duckdns_config:/config
+
     restart: unless-stopped
     env_file:
       - .env.docker-compose
@@ -87,7 +97,13 @@ services:
 networks:
   my_media_network:
     external: true
-# volumes:
-# frontend-node-modules:
+
+volumes:
+  letsencrypt-certs:
+  letsencrypt-vhost-d:
+  letsencrypt-html:
+  static_volume:
+  media_volume:
+  duckdns_config:
 # Path: docker-compose.staging.yml
-# /Users/mshittu/programming-projects/javascript/react/new-next/docker-compose.staging.yml
+# /home/mshittu/dev/frontend/react-apps/session-management/docker-compose.staging.yml
