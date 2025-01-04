@@ -39,6 +39,10 @@ jobs:
           echo "APP_DESCRIPTION=${{ vars.APP_DESCRIPTION }}" >> .env.docker-compose
           echo "SUBDOMAINS=${{ secrets.SUBDOMAINS }}" >> .env.docker-compose
           echo "DUCKDNS_TOKEN=${{ secrets.DUCKDNS_TOKEN }}" >> .env.docker-compose
+          echo "VIRTUAL_HOST=${{ secrets.VIRTUAL_HOST }}" >> .env.docker-compose
+          echo "LETSENCRYPT_HOST=${{ secrets.LETSENCRYPT_HOST }}" >> .env.docker-compose
+          echo "LETSENCRYPT_EMAIL=${{ secrets.LETSENCRYPT_EMAIL }}" >> .env.docker-compose
+          echo "DEFAULT_EMAIL=${{ secrets.DEFAULT_EMAIL }}" >> .env.docker-compose
 
       # - name: Print .env.docker-compose for debugging
       #   run: cat .env.docker-compose

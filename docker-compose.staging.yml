@@ -27,10 +27,12 @@ services:
       - ./nginx-proxy/static.conf:/etc/nginx/vhost.d/default_location
       - static_volume:/home/app/web/staticfiles
     environment:
-      - DEFAULT_EMAIL=devshittu@gmail.com
+      - DEFAULT_EMAIL=${DEFAULT_EMAIL}
       - NGINX_PROXY_CONTAINER=nginx-proxy
       - DEBUG=true
       # - ACME_CA_URI=https://acme-staging-v02.api.letsencrypt.org/directory # Use Let's Encrypt staging
+    env_file:
+      - .env.docker-compose
     networks:
       - my_media_network
 
@@ -49,6 +51,8 @@ services:
     volumes:
       - /path/to/duckdns/config:/config
     restart: unless-stopped
+    env_file:
+      - .env.docker-compose
 
   frontend-app:
     container_name: frontend-app
