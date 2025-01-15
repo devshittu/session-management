@@ -48,6 +48,11 @@ jobs:
       - name: Print .env.docker-compose for debugging
         run: cat .env.docker-compose
 
+      - name: Copy .env.docker-compose to .env
+        run: cp .env.docker-compose .env
+
+      - name: Print .env for debugging
+        run: cat .env
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_HUB_TOKEN }}" | sudo docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
 

@@ -1,15 +1,109 @@
+# # Base Image
+# FROM node:20.10-alpine AS base
+# WORKDIR /app
+
+# # Install dependencies only when needed
+# FROM base AS deps
+# RUN apk add --no-cache libc6-compat
+
+# # Copy package files based on the detected package manager
+# COPY package.json package-lock.json* yarn.lock* pnpm-lock.yaml* ./
+
+# # Install dependencies
+# RUN if [ -f yarn.lock ]; then \
+#     yarn install --frozen-lockfile; \
+#     elif [ -f pnpm-lock.yaml ]; then \
+#     npm install -g pnpm && pnpm install; \
+#     elif [ -f package-lock.json ]; then \
+#     npm ci; \
+#     else \
+#     echo "No lockfile found, installing with npm"; \
+#     npm install; \
+#     fi
+
+# # Copy Prisma schema and environment variables
+# COPY prisma ./prisma
+# ARG DATABASE_URL
+# ENV DATABASE_URL=${DATABASE_URL}
+# # COPY .env .env
+
+# # Generate Prisma Client
+# RUN npx prisma generate
+
+# # # Apply migrations
+# # RUN npx prisma migrate deploy
+# # DO NOT run migrations here since secrets aren’t available at build time
+
+# # === Development Stage ===
+# FROM base AS dev
+# WORKDIR /app
+# COPY --from=deps /app/node_modules ./node_modules
+# COPY . .
+# ENV CHOKIDAR_USEPOLLING=true
+# ENV WATCHPACK_POLLING=true
+
+# CMD \
+#     if [ -f yarn.lock ]; then yarn dev; \
+#     elif [ -f package-lock.json ]; then npm run dev; \
+#     elif [ -f pnpm-lock.yaml ]; then pnpm dev; \
+#     else yarn dev; \
+#     fi
+
+# # Builder Stage
+# FROM base AS builder
+# WORKDIR /app
+# COPY --from=deps /app/node_modules ./node_modules
+# COPY --from=deps /app/prisma ./prisma
+# COPY . .
+# ENV NEXT_TELEMETRY_DISABLED=1
+# RUN if [ -f yarn.lock ]; then \
+#     yarn build; \
+#     elif [ -f pnpm-lock.yaml ]; then \
+#     pnpm build; \
+#     elif [ -f package-lock.json ]; then \
+#     npm run build; \
+#     else \
+#     npm run build; \
+#     fi
+
+# # Production Stage
+# FROM base AS runner
+# WORKDIR /app
+# ENV NODE_ENV=production
+# ENV NEXT_TELEMETRY_DISABLED=1
+# RUN addgroup --system --gid 1001 nodejs && \
+#     adduser --system --uid 1001 nextjs
+
+# # Copy built files and Prisma Client
+# COPY --from=builder /app/public ./public
+# # COPY --from=builder /app/.next/standalone ./
+# COPY --from=builder /app/.next/static ./.next/static
+# COPY --from=deps /app/prisma ./prisma
+
+# # Set ownership
+# RUN mkdir -p .next && chown nextjs:nodejs .next
+
+# USER nextjs
+
+# EXPOSE 3000
+# ENV PORT=3000
+# ENV HOSTNAME="0.0.0.0"
+
+# # Start the application with Prisma migrations
+# CMD ["sh", "-c", "npx prisma migrate deploy && node server.js"]
+
 # Base Image
 FROM node:20.10-alpine AS base
 WORKDIR /app
 
-# Install dependencies only when needed
+# Install runtime dependencies
 FROM base AS deps
 RUN apk add --no-cache libc6-compat
 
-# Copy package files based on the detected package manager
+# Copy package manager files
 COPY package.json package-lock.json* yarn.lock* pnpm-lock.yaml* ./
 
-# Install dependencies
+# Install dependencies (supporting yarn, pnpm, or npm)
 RUN if [ -f yarn.lock ]; then \
     yarn install --frozen-lockfile; \
     elif [ -f pnpm-lock.yaml ]; then \
@@ -21,51 +115,31 @@ RUN if [ -f yarn.lock ]; then \
     npm install; \
     fi
 
-# Copy Prisma schema and environment variables
+# Copy Prisma schema
 COPY prisma ./prisma
+
+# Build-time argument for DATABASE_URL (used only if needed at build time)
 ARG DATABASE_URL
 ENV DATABASE_URL=${DATABASE_URL}
-COPY .env .env
 
-# Generate Prisma Client
+# Generate Prisma Client (does not run migrations)
 RUN npx prisma generate
 
-# Apply migrations
-RUN npx prisma migrate deploy
+# DO NOT run migrations here since secrets aren’t available at build time
 
-# Development Stage
+# === Development Stage ===
 FROM base AS dev
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV CHOKIDAR_USEPOLLING=true
 ENV WATCHPACK_POLLING=true
-
-CMD \
-    if [ -f yarn.lock ]; then yarn dev; \
+CMD if [ -f yarn.lock ]; then yarn dev; \
     elif [ -f package-lock.json ]; then npm run dev; \
     elif [ -f pnpm-lock.yaml ]; then pnpm dev; \
-    else yarn dev; \
-    fi
+    else yarn dev; fi
 
-# Builder Stage
-FROM base AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/prisma ./prisma
-COPY . .
-ENV NEXT_TELEMETRY_DISABLED=1
-RUN if [ -f yarn.lock ]; then \
-    yarn build; \
-    elif [ -f pnpm-lock.yaml ]; then \
-    pnpm build; \
-    elif [ -f package-lock.json ]; then \
-    npm run build; \
-    else \
-    npm run build; \
-    fi
-
-# Production Stage
+# === Production/Runner Stage ===
 FROM base AS runner
 WORKDIR /app
 ENV NODE_ENV=production
@@ -73,23 +147,22 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
-# Copy built files and Prisma Client
-COPY --from=builder /app/public ./public
-# COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
+# Copy assets and Prisma Client from builder (or deps)
 COPY --from=deps /app/prisma ./prisma
+# Copy built static files if available (adjust as needed)
+COPY --from=deps /app/public ./public
+COPY --from=deps /app/.next/static ./.next/static
 
-# Set ownership
+# Set permissions
 RUN mkdir -p .next && chown nextjs:nodejs .next
 
 USER nextjs
-
 EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-# Start the application with Prisma migrations
+# Run runtime tasks: here we execute Prisma migrations (which require DATABASE_URL)
 CMD ["sh", "-c", "npx prisma migrate deploy && node server.js"]
 
 
-# Path: Dockerfile.stg
+# # Path: Dockerfile.stg
