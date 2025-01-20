@@ -35,20 +35,25 @@ tar xzf "$RUNNER_PKG"
 #########################################################
 #  Token Input Handling: Interactive and Non-Interactive
 #########################################################
-
-# Check if running in an interactive TTY
-if [ -t 0 ]; then
-    # Interactive: prompt user for the token, hide input
-    echo "Please enter the registration token for the repository '$REPO_NAME':"
-    read -s -p "Token: " TOKEN
-    echo
+# Token Input Handling: Check Environment First, Then Prompt
+if [ -n "$TOKEN" ]; then
+    # Token provided via environment
+    echo "Using TOKEN from environment."
 else
-    # Non-interactive: look for TOKEN in the environment
-    if [ -z "$TOKEN" ]; then
-        echo "Error: No TOKEN environment variable provided, and script not in an interactive shell."
-        exit 1
+    # Check if running in an interactive TTY
+    if [ -t 0 ]; then
+        # Interactive: prompt user for the token, hide input
+        echo "Please enter the registration token for the repository '$REPO_NAME':"
+        read -s -p "Token: " TOKEN
+        echo
+    else
+        # Non-interactive: look for TOKEN in the environment
+        if [ -z "$TOKEN" ]; then
+            echo "Error: No TOKEN environment variable provided, and script not in an interactive shell."
+            exit 1
+        fi
+        echo "Using TOKEN from environment (non-interactive)."
     fi
-    echo "Using TOKEN from environment (non-interactive)."
 fi
 
 # If TOKEN is still empty, abort
