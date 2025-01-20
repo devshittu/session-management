@@ -12,7 +12,7 @@ provider "lxd" {}
 
 # Staging profile
 resource "lxd_profile" "staging" {
-  name        = "${var.instance_name}-staging"
+  name        = local.instance_profile_label
   description = "Staging environment"
 
   config = {
@@ -34,7 +34,6 @@ resource "lxd_profile" "staging" {
     type = "disk"
     properties = {
       path = "/"
-      # pool = "kingston-pool"
       pool = var.storage_pool
     }
   }
@@ -43,13 +42,15 @@ resource "lxd_profile" "staging" {
 
 locals {
   # profiles = var.environment == "production" ? ["default", "production"] : ["default", "staging"]
-  profiles = ["default", "staging"]
+  # profiles = ["default", "staging"]
+  instance_profile_label = "${var.instance_name}-staging-profile"
+  instance_hostname_label = "${var.instance_name}-host"
 }
 
 resource "lxd_instance" "container" {
   name     = var.instance_name
   image    = "${var.os_image}"
-  profiles = local.profiles
+  profiles = [local.instance_profile_label]
 
   config = {
     "user.user-data" = <<-EOF
@@ -223,4 +224,4 @@ resource "null_resource" "provision_scripts" {
   }
 }
 
-# lxd/main.tf
+# deploy/lxd/main.tf
