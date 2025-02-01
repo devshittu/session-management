@@ -5,6 +5,9 @@ import Link from 'next/link';
 import { ServiceUser, ServiceUsersResponse } from '@/types/serviceUser';
 import { useServiceUsers } from '@/hooks/useServiceUsers';
 import { InView } from 'react-intersection-observer';
+import { FiEdit, FiTrash2 } from 'react-icons/fi';
+import { toast } from 'react-toastify';
+import { useQueryClient } from '@tanstack/react-query';
 
 const ServiceUsersList: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<
@@ -13,6 +16,8 @@ const ServiceUsersList: React.FC = () => {
   const [sortBy, setSortBy] = useState<string>('name');
   const [order, setOrder] = useState<'asc' | 'desc'>('desc');
   const [groupByWard, setGroupByWard] = useState<boolean>(false);
+
+  const queryClient = useQueryClient();
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useServiceUsers({
@@ -40,53 +45,90 @@ const ServiceUsersList: React.FC = () => {
     setGroupByWard(e.target.checked);
   };
 
+  const handleEndSession = async (sessionId: number) => {
+    try {
+      const response = await fetch(`/api/sessions/${sessionId}/end`, {
+        method: 'POST',
+      });
+      if (response.ok) {
+        queryClient.invalidateQueries({ queryKey: ['sessions'] });
+        toast.success('Session ended successfully!');
+      } else {
+        const errorData = await response.json();
+        toast.error(errorData.error || 'Failed to end session');
+      }
+    } catch (error) {
+      console.error('Error ending session:', error);
+      toast.error('An unexpected error occurred.');
+    }
+  };
+
+  // Function to find the latest admission
+  const getLatestAdmission = (admissions: any[] | undefined) => {
+    if (!admissions || admissions.length === 0) return null;
+    return admissions.reduce((latest, current) => {
+      return new Date(current.admissionDate) > new Date(latest.admissionDate)
+        ? current
+        : latest;
+    }, admissions[0]);
+  };
+
   return (
-    <div>
+    <div className="container mx-auto py-8">
       {/* Filters and Sorting */}
-      <div className="flex flex-wrap justify-between items-center mb-4">
+      <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
+        {/* Status Filter */}
         <div className="flex items-center space-x-2">
-          <label htmlFor="statusFilter" className="mr-2">
-            Filter by Status:
+          <label htmlFor="statusFilter" className="font-medium">
+            Status:
           </label>
           <select
             id="statusFilter"
             value={statusFilter}
             onChange={handleStatusFilterChange}
-            className="border rounded px-2 py-1"
+            className="select select-bordered"
           >
             <option value="all">All</option>
             <option value="admitted">Admitted</option>
             <option value="discharged">Discharged</option>
           </select>
         </div>
+
+        {/* Sort By */}
         <div className="flex items-center space-x-2">
-          <label htmlFor="sortBy" className="mr-2">
+          <label htmlFor="sortBy" className="font-medium">
             Sort By:
           </label>
           <select
             id="sortBy"
             value={sortBy}
             onChange={handleSortChange}
-            className="border rounded px-2 py-1"
+            className="select select-bordered"
           >
             <option value="name">Name</option>
             <option value="nhsNumber">NHS Number</option>
           </select>
-          <label htmlFor="order" className="mr-2">
+        </div>
+
+        {/* Order */}
+        <div className="flex items-center space-x-2">
+          <label htmlFor="order" className="font-medium">
             Order:
           </label>
           <select
             id="order"
             value={order}
             onChange={handleOrderChange}
-            className="border rounded px-2 py-1"
+            className="select select-bordered"
           >
             <option value="asc">Ascending</option>
             <option value="desc">Descending</option>
           </select>
         </div>
+
+        {/* Group By Ward */}
         <div className="flex items-center space-x-2">
-          <label htmlFor="groupByWard" className="mr-2">
+          <label htmlFor="groupByWard" className="font-medium">
             Group by Ward:
           </label>
           <input
@@ -94,153 +136,148 @@ const ServiceUsersList: React.FC = () => {
             id="groupByWard"
             checked={groupByWard}
             onChange={handleGroupByWardChange}
-            className="h-4 w-4 text-blue-600"
+            className="checkbox checkbox-primary"
           />
         </div>
-        <Link
-          href="/serviceUsers/new"
-          className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-        >
-          Add Service User
+
+        {/* Add Service User Button */}
+        <Link href="/serviceUsers/new">
+          <button className="btn btn-primary">+ Add Service User</button>
         </Link>
       </div>
 
       {/* Service Users List */}
-      <div className="overflow-x-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {!groupByWard ? (
-          // Ungrouped List
-          <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-            <thead className="bg-gray-800 text-white">
-              <tr>
-                <th className="py-3 px-4 uppercase font-semibold text-sm">
-                  Name
-                </th>
-                <th className="py-3 px-4 uppercase font-semibold text-sm">
-                  Ward
-                </th>
-                <th className="py-3 px-4 uppercase font-semibold text-sm">
-                  Status
-                </th>
-                <th className="py-3 px-4 uppercase font-semibold text-sm">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="text-gray-700">
-              {/* @ts-ignore */}
-              {data?.pages?.map((page, pageIndex) => (
+          // Ungrouped List - Card Layout
+          <>
+            {/* @ts-ignore */}
+            {data?.pages.map(
+              (page: ServiceUsersResponse, pageIndex: number) => (
                 <React.Fragment key={pageIndex}>
-                  {page.serviceUsers.map((user: ServiceUser) => {
-                    // @ts-ignore
-                    const latestAdmission = user.admissions[0];
-                    const wardName = latestAdmission?.ward?.name || 'No Ward';
-                    const isAdmitted =
-                      latestAdmission && !latestAdmission.dischargeDate;
+                  {Array.isArray(page.serviceUsers) &&
+                    page.serviceUsers.map((user: ServiceUser) => {
+                      const latestAdmission = getLatestAdmission(
+                        user.admissions,
+                      );
+                      const wardName = latestAdmission?.ward?.name || 'No Ward';
+                      const isAdmitted =
+                        latestAdmission && !latestAdmission.dischargeDate;
 
-                    return (
-                      <tr key={user.id} className="border-b hover:bg-gray-100">
-                        <td className="py-3 px-4">{user.name}</td>
-                        <td className="py-3 px-4">{wardName}</td>
-                        <td
-                          className={`py-3 px-4 ${
-                            isAdmitted ? 'text-green-500' : 'text-red-500'
-                          }`}
+                      return (
+                        <div
+                          key={user.id}
+                          className="card bg-base-100 shadow-lg hover:shadow-xl transition-shadow duration-300"
                         >
-                          {isAdmitted ? 'Admitted' : 'Discharged'}
-                        </td>
-                        <td className="py-3 px-4 space-x-2">
-                          <Link
-                            href={`/serviceUsers/${user.id}/edit`}
-                            className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
-                          >
-                            Edit
-                          </Link>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </React.Fragment>
-              ))}
-            </tbody>
-          </table>
-        ) : (
-          // Grouped List
-
-          // @ts-ignore
-          data?.pages.map((page: ServiceUsersResponse, pageIndex: any) => (
-            <div key={pageIndex}>
-              {Object.entries(page.serviceUsers).map(
-                ([wardName, users]: [string, ServiceUser[]]) => (
-                  <div key={wardName}>
-                    <h2 className="text-xl font-semibold mt-4 mb-2">
-                      {wardName}
-                    </h2>
-                    <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-                      <thead className="bg-gray-800 text-white">
-                        <tr>
-                          <th className="py-3 px-4 uppercase font-semibold text-sm">
-                            Name
-                          </th>
-                          <th className="py-3 px-4 uppercase font-semibold text-sm">
-                            Status
-                          </th>
-                          <th className="py-3 px-4 uppercase font-semibold text-sm">
-                            Actions
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="text-gray-700">
-                        {users.map((user) => {
-                          // @ts-ignore
-                          const latestAdmission = user.admissions[0];
-                          const isAdmitted =
-                            latestAdmission && !latestAdmission.dischargeDate;
-                          return (
-                            <tr
-                              key={user.id}
-                              className="border-b hover:bg-gray-100"
-                            >
-                              <td className="py-3 px-4">{user.name}</td>
-                              <td
-                                className={`py-3 px-4 ${
-                                  isAdmitted ? 'text-green-500' : 'text-red-500'
+                          <div className="card-body">
+                            <h2 className="card-title flex justify-between items-center">
+                              <span>{user.name}</span>
+                              <span
+                                className={`badge ${
+                                  isAdmitted ? 'badge-success' : 'badge-error'
                                 }`}
                               >
                                 {isAdmitted ? 'Admitted' : 'Discharged'}
-                              </td>
-                              <td className="py-3 px-4 space-x-2">
-                                <Link
-                                  href={`/serviceUsers/${user.id}/edit`}
-                                  className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
-                                >
+                              </span>
+                            </h2>
+                            <p className="text-sm text-gray-600">
+                              <strong>Ward:</strong> {wardName}
+                            </p>
+                            <div className="card-actions justify-end mt-4">
+                              <Link href={`/serviceUsers/${user.id}/edit`}>
+                                <button className="btn btn-sm btn-info flex items-center gap-1">
+                                  <FiEdit />
                                   Edit
-                                </Link>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                ),
-              )}
-            </div>
-          ))
+                                </button>
+                              </Link>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                </React.Fragment>
+              ),
+            )}
+          </>
+        ) : (
+          // Grouped List by Ward - Card Layout
+          <>
+            {/* @ts-ignore */}
+            {data?.pages.map(
+              (page: ServiceUsersResponse, pageIndex: number) => (
+                <div key={pageIndex} className="w-full">
+                  {Object.entries(page.serviceUsers).map(
+                    ([wardName, users]: [string, ServiceUser[]]) => (
+                      <div key={wardName} className="mb-6">
+                        <h2 className="text-2xl font-semibold mb-4">
+                          {wardName}
+                        </h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {users.map((user: ServiceUser) => {
+                            const latestAdmission = getLatestAdmission(
+                              user.admissions,
+                            );
+                            const isAdmitted =
+                              latestAdmission && !latestAdmission.dischargeDate;
+                            return (
+                              <div
+                                key={user.id}
+                                className="card bg-base-100 shadow-lg hover:shadow-xl transition-shadow duration-300"
+                              >
+                                <div className="card-body">
+                                  <h3 className="card-title flex justify-between items-center">
+                                    <span>{user.name}</span>
+                                    <span
+                                      className={`badge ${
+                                        isAdmitted
+                                          ? 'badge-success'
+                                          : 'badge-error'
+                                      }`}
+                                    >
+                                      {isAdmitted ? 'Admitted' : 'Discharged'}
+                                    </span>
+                                  </h3>
+                                  <div className="card-actions justify-end mt-4">
+                                    <Link
+                                      href={`/serviceUsers/${user.id}/edit`}
+                                    >
+                                      <button className="btn btn-sm btn-info flex items-center gap-1">
+                                        <FiEdit />
+                                        Edit
+                                      </button>
+                                    </Link>
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ),
+                  )}
+                </div>
+              ),
+            )}
+          </>
         )}
+      </div>
 
-        {/* Infinite Scrolling */}
+      {/* Infinite Scrolling */}
+      <div className="flex justify-center items-center mt-6">
         {hasNextPage && (
           <InView
             onChange={(inView) => {
-              if (inView) fetchNextPage();
+              if (inView && !isFetchingNextPage) {
+                fetchNextPage();
+              }
             }}
           >
             {({ ref }) => (
-              <div ref={ref} className="h-10 bg-gray-200 text-center">
+              <div ref={ref} className="flex justify-center items-center">
                 {isFetchingNextPage ? (
-                  <p>Loading more...</p>
+                  <button className="btn btn-ghost loading"></button>
                 ) : (
-                  <p>Load more...</p>
+                  <button className="btn btn-secondary">Load More</button>
                 )}
               </div>
             )}
@@ -248,9 +285,7 @@ const ServiceUsersList: React.FC = () => {
         )}
 
         {!hasNextPage && (
-          <div className="h-10 bg-gray-200 text-center">
-            <p>No more service users to load.</p>
-          </div>
+          <p className="text-gray-500">No more service users to load.</p>
         )}
       </div>
     </div>
