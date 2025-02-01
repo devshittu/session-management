@@ -49,6 +49,7 @@ src/stories
 
 # local env files
 .env
+.env.prod
 .env.local
 .env.development.local
 .env.test.local
