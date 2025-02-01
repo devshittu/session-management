@@ -2,15 +2,16 @@ import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
 import './prism.css';
-import Link from 'next/link';
-import { Work_Sans } from 'next/font/google';
 import { AppProvider } from '@/providers/app';
+import Navbar from '@/components/Blocks/Navbar';
+import Sidebar from '@/components/Blocks/Sidebar';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
   variable: '--font-geist-sans',
   weight: '100 900',
 });
+
 const geistMono = localFont({
   src: './fonts/GeistMonoVF.woff',
   variable: '--font-geist-mono',
@@ -24,53 +25,27 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-base-200`}
       >
         <AppProvider>
-          <nav className="bg-gray-800 p-4">
-            <div className="container mx-auto flex space-x-4">
-              <Link href="/" className="text-white hover:text-gray-300">
-                Home
-              </Link>
-
-              <Link href="/sessions" className="text-white hover:text-gray-300">
-                Sessions
-              </Link>
-              <Link
-                href="/serviceUsers"
-                className="text-white hover:text-gray-300"
-              >
-                ServiceUsers
-              </Link>
-              <Link
-                href="/activities"
-                className="text-white hover:text-gray-300"
-              >
-                Activities
-              </Link>
-              <Link href="/reports" className="text-white hover:text-gray-300">
-                Reports
-              </Link>
-              <Link href="/feel" className="text-white hover:text-gray-300">
-                Look & Feel
-              </Link>
-              <Link
-                href="/playground/box"
-                className="text-white hover:text-gray-300"
-              >
-                Playground Box
-              </Link>
+          <div className="drawer lg:drawer-open">
+            <input id="nav-drawer" type="checkbox" className="drawer-toggle" />
+            <div className="drawer-content flex flex-col min-h-screen">
+              <Navbar />
+              <main className="p-6 container mx-auto">{children}</main>
             </div>
-          </nav>
-          <main className="container mx-auto p-4">{children}</main>
+            <Sidebar />
+          </div>
         </AppProvider>
       </body>
     </html>
   );
 }
+
+// src/app/layout.tsx
