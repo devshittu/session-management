@@ -1,152 +1,45 @@
-// import { prisma } from '@/lib/prisma';
-
-// export default async function ActivitiesPage() {
-//   const activities = await prisma.activity.findMany();
-
-//   return (
-//     <div>
-//       <h1>Activities</h1>
-//       <ul>
-//         {activities.map((activity) => (
-//           <li key={activity.id}>{activity.name}</li>
-//         ))}
-//       </ul>
-//     </div>
-//   );
-// }
-
-// 'use client';
-
-// import { useEffect, useState } from 'react';
-
-// export default function ActivitiesPage() {
-//   const [activities, setActivities] = useState([]);
-//   const [newActivity, setNewActivity] = useState('');
-
-//   const fetchActivities = async () => {
-//     const res = await fetch('/api/activities');
-//       // Check if response is valid
-//       if (!res.ok) {
-//         throw new Error(`HTTP error! Status: ${res.status}`);
-//       }
-//     const data = await res.json();
-
-//       console.log('activities data:// ', data);
-//       setActivities(data);
-//   };
-
-//   const createActivity = async () => {
-//     await fetch('/api/activities', {
-//       method: 'POST',
-//       headers: { 'Content-Type': 'application/json' },
-//       body: JSON.stringify({ name: newActivity }),
-//     });
-//     setNewActivity('');
-//     fetchActivities();
-//   };
-
-//   const deleteActivity = async (id: number) => {
-//     await fetch('/api/activities', {
-//       method: 'DELETE',
-//       headers: { 'Content-Type': 'application/json' },
-//       body: JSON.stringify({ id }),
-//     });
-//     fetchActivities();
-//   };
-
-//   const updateActivity = async (id: number, name: string) => {
-//     await fetch('/api/activities', {
-//       method: 'PUT',
-//       headers: { 'Content-Type': 'application/json' },
-//       body: JSON.stringify({ id, name }),
-//     });
-//     fetchActivities();
-//   };
-
-//   useEffect(() => {
-//     fetchActivities();
-//   }, []);
-//   return (
-//     <div>
-//       <h1 className="text-xl font-bold">Activities</h1>
-//       <div>
-//         <input
-//           type="text"
-//           value={newActivity}
-//           onChange={(e) => setNewActivity(e.target.value)}
-//           placeholder="New Activity Name"
-//           className="border rounded px-2 py-1"
-//         />
-//         <button
-//           onClick={createActivity}
-//           className="ml-2 bg-blue-500 text-white px-4 py-1 rounded"
-//         >
-//           Add
-//         </button>
-//       </div>
-//       <ul className="mt-4">
-//         {activities.map((activity: any) => (
-//           <li key={activity.id} className="flex justify-between items-center">
-//             <span>
-//               {activity.name} (Created: {new Date(activity.createdAt).toLocaleString()})
-//             </span>
-//             <button
-//               onClick={() => deleteActivity(activity.id)}
-//               className="bg-red-500 text-white px-4 py-1 rounded ml-2"
-//             >
-//               Delete
-//             </button>
-//             <button
-//               onClick={() => updateActivity(activity.id, prompt('New Name:', activity.name) || activity.name)}
-//               className="bg-yellow-500 text-white px-4 py-1 rounded ml-2"
-//             >
-//               Edit
-//             </button>
-//           </li>
-//         ))}
-//       </ul>
-//     </div>
-//   );
-// }
+// src/app/activities/page.tsx
 
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
+import { FiEdit, FiTrash } from 'react-icons/fi';
 
 export default async function ActivitiesPage() {
   const activities = await prisma.activity.findMany();
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Activities</h1>
-      <Link href="/activities/new" className="text-blue-500 hover:underline">
-        Create New Activity
-      </Link>
-      <ul className="mt-4">
+    <div className="container mx-auto py-8">
+      <h1 className="text-3xl font-bold mb-6 text-primary">Activities</h1>
+      <div className="flex justify-between items-center mb-6">
+        <Link href="/activities/new">
+          <button className="btn btn-primary">+ Create New Activity</button>
+        </Link>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {activities.map((activity) => (
-          <li
-            key={activity.id}
-            className="flex justify-between items-center mb-2"
-          >
-            <span>{activity.name}</span>
-            <div>
-              <Link
-                href={`/activities/${activity.id}/edit`}
-                className="text-blue-500 hover:underline mr-2"
-              >
-                Edit
-              </Link>
-              <Link
-                href={`/activities/${activity.id}/delete`}
-                className="text-red-500 hover:underline"
-              >
-                Delete
-              </Link>
+          <div key={activity.id} className="card shadow-lg bg-base-100">
+            <div className="card-body">
+              <h2 className="card-title text-lg font-semibold">
+                {activity.name}
+              </h2>
+              <div className="card-actions justify-end">
+                <Link href={`/activities/${activity.id}/edit`} passHref>
+                  <button className="btn btn-sm btn-outline btn-info flex items-center gap-1">
+                    <FiEdit />
+                    Edit
+                  </button>
+                </Link>
+                <Link href={`/activities/${activity.id}/delete`} passHref>
+                  <button className="btn btn-sm btn-outline btn-error flex items-center gap-1">
+                    <FiTrash />
+                    Delete
+                  </button>
+                </Link>
+              </div>
             </div>
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
-
-// src/app/activities/page.tsx
