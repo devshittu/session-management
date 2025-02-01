@@ -1,4 +1,4 @@
-// src/components/ToastProvider.tsx
+// src/providers/ToastProvider.tsx
 'use client';
 
 import React from 'react';
