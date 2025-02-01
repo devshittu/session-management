@@ -16,10 +16,14 @@
     "build-storybook": "storybook build",
     "prepare": "husky",
     "prisma:format": "dotenv -e .env -- npx prisma format",
-    "prisma:generate": "dotenv -e .env -- npx prisma generate",
     "prisma:migrate": "dotenv -e .env -- npx prisma migrate dev",
     "prisma:push": "dotenv -e .env -- npx prisma db push",
-    "prisma:studio": "dotenv -e .env -- npx prisma studio"
+    "prisma:studio": "dotenv -e .env -- npx prisma studio",
+    "prisma:generate-schema": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/generate-schema.ts",
+    "prisma:migrate:dev": "dotenv -e .env -- npx prisma migrate dev --schema=prisma/schema.prisma",
+    "prisma:generate": "dotenv -e .env -- npx prisma generate --schema=prisma/schema.prisma",
+    "prisma:seed:dev": "dotenv -e .env -- npx ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts",
+    "prisma:seed:prod": "dotenv -e .env.production -- npx ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts"
   },
   "dependencies": {
     "@floating-ui/react": "^0.27.1",
@@ -32,6 +36,7 @@
     "framer-motion": "^11.14.4",
     "next": "15.0.3",
     "next-themes": "^0.4.3",
+    "pg": "^8.13.1",
     "prismjs": "^1.29.0",
     "react": "19.0.0-rc-66855b96-20241106",
     "react-dom": "19.0.0-rc-66855b96-20241106",
