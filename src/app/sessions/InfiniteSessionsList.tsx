@@ -3,158 +3,185 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { InView } from 'react-intersection-observer';
-import Link from 'next/link';
-
+import { toast } from 'react-toastify';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   Session,
   SessionsResponse,
   GroupedResponse,
   GroupedSession,
-  ServiceUserStatus,
 } from '@/types/serviceUser';
 import { useSessions } from '@/hooks/useSessions';
 import ElapsedTime from './ElapsedTime';
 
-// Union type that can be either a normal sessions response or a grouped aggregator result
+// Define SessionsData type
 type SessionsData = SessionsResponse | GroupedResponse;
 
 const InfiniteSessionsList: React.FC = () => {
   const [sortBy, setSortBy] = useState<string>('timeIn');
-  const [order, setOrder] = useState<'asc' | 'desc'>('asc');
+  const [order, setOrder] = useState<'asc' | 'desc'>('desc');
   const [groupBy, setGroupBy] = useState<
     'none' | 'timeIn' | 'activityId' | 'admissionId'
   >('none');
 
   const router = useRouter();
+  const queryClient = useQueryClient();
 
-  // 1) `data` is an infinite query result with pages of type SessionsData
   const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } =
-    useSessions({ sortBy, order, groupBy });
+    useSessions({
+      sortBy,
+      order,
+      groupBy,
+    });
 
-  // 2) Explicitly type the `page` and `pageIndex` in the map callback
-  const renderPage = (page: SessionsData, pageIndex: number) => {
-    if ('groupedData' in page) {
-      // aggregator approach
-      return (
-        <React.Fragment key={pageIndex}>
-          {page.groupedData.map((group: GroupedSession, idx) => (
-            <div key={idx} className="border-b p-4">
-              {group.timeIn && (
-                <p>
-                  <strong>timeIn:</strong> {group.timeIn}
-                </p>
-              )}
-              {group.admissionId && (
-                <p>
-                  <strong>Admission:</strong> {group.admissionId}
-                </p>
-              )}
-              {group.activityId && (
-                <p>
-                  <strong>Activity:</strong> {group.activityId}
-                </p>
-              )}
-              <p>
-                <strong>Count:</strong> {group._count._all}
-              </p>
-            </div>
-          ))}
-        </React.Fragment>
-      );
-    } else {
-      // normal (non-aggregator) approach
-      return (
-        <React.Fragment key={pageIndex}>
-          {page.sessions.map((session: Session) => (
-            <div key={session.id} className="border-b p-4">
-              <p>
-                <strong>Service User:</strong>{' '}
-                {session.admission.serviceUser.name}
-              </p>
-              <p>
-                <strong>Activity:</strong> {session.activity.name}
-              </p>
-              <p>
-                <strong>Time In:</strong>{' '}
-                {new Date(session.timeIn).toLocaleString()}
-              </p>
-              <p>
-                <strong>Time Out:</strong>{' '}
-                {session.timeOut
-                  ? new Date(session.timeOut).toLocaleString()
-                  : 'In Progress'}
-              </p>
-              <p>
-                <strong>Elapsed Time:</strong>{' '}
-                <ElapsedTime
-                  timeIn={session.timeIn}
-                  timeOut={session.timeOut}
-                />
-              </p>
-              {!session.timeOut && (
-                <button
-                  onClick={() => handleEndSession(session.id)}
-                  className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 mt-2"
-                >
-                  End Session
-                </button>
-              )}
-            </div>
-          ))}
-        </React.Fragment>
-      );
-    }
-  };
-
+  // Handle session end
   const handleEndSession = async (sessionId: number) => {
     try {
       const response = await fetch(`/api/sessions/${sessionId}/end`, {
         method: 'POST',
       });
+
       if (response.ok) {
-        router.refresh();
+        queryClient.invalidateQueries({ queryKey: ['sessions'] });
+        toast.success('Session ended successfully!');
       } else {
-        const error = await response.json();
-        alert(error.error || 'Failed to end session');
+        const errorData = await response.json();
+        toast.error(errorData.error || 'Failed to end session');
       }
     } catch (error) {
       console.error('Error ending session:', error);
-      alert('An unexpected error occurred.');
+      toast.error('An unexpected error occurred.');
     }
   };
 
-  // Handlers
-  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSortBy(e.target.value);
-  };
-  const handleOrderChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setOrder(e.target.value as 'asc' | 'desc');
-  };
-  const handleGroupChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setGroupBy(
-      e.target.value as 'none' | 'timeIn' | 'activityId' | 'admissionId',
-    );
+  // Function to render pages
+  const renderPage = (page: SessionsData, pageIndex: number) => {
+    if ('groupedData' in page) {
+      // Grouped sessions
+      return (
+        <React.Fragment key={pageIndex}>
+          {page.groupedData.map((group: GroupedSession, idx) => (
+            <div
+              key={idx}
+              className="card bg-base-100 shadow-xl border border-base-300 p-4"
+            >
+              <div className="card-body">
+                {group.timeIn && (
+                  <p className="text-lg font-semibold">
+                    ⏳ timeIn: {group.timeIn}
+                  </p>
+                )}
+                {group.admissionId && <p>🏥 Admission: {group.admissionId}</p>}
+                {group.activityId && <p>🎯 Activity: {group.activityId}</p>}
+                <p className="text-primary font-bold">
+                  📌 Count: {group._count._all}
+                </p>
+              </div>
+            </div>
+          ))}
+        </React.Fragment>
+      );
+    } else {
+      // Normal session list
+      return (
+        <React.Fragment key={pageIndex}>
+          {page.sessions.map((session: Session) => (
+            <div
+              key={session.id}
+              className="card bg-base-100 shadow-xl border border-base-300 p-4 mb-4"
+            >
+              <div className="card-body">
+                <h2 className="card-title flex justify-between items-center">
+                  <span>🧑‍⚕️ {session.admission.serviceUser.name}</span>
+                  <span className="badge badge-primary text-sm">
+                    #{session.id}
+                  </span>
+                </h2>
+                <p className="text-secondary">
+                  🎯 Activity: {session.activity.name}
+                </p>
+                <p>⏳ Time In: {new Date(session.timeIn).toLocaleString()}</p>
+                <p>
+                  🚀 Time Out:{' '}
+                  {session.timeOut ? (
+                    new Date(session.timeOut).toLocaleString()
+                  ) : (
+                    <span className="badge badge-warning">In Progress</span>
+                  )}
+                </p>
+                <p>
+                  ⏰ Elapsed Time:{' '}
+                  <ElapsedTime
+                    timeIn={session.timeIn}
+                    timeOut={session.timeOut}
+                  />
+                </p>
+
+                {/* End session button */}
+                {!session.timeOut && (
+                  <button
+                    onClick={() => handleEndSession(session.id)}
+                    className="btn btn-error text-white w-full mt-3"
+                  >
+                    End Session
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+        </React.Fragment>
+      );
+    }
   };
 
   return (
-    <div>
-      {/* Controls: sort, order, group */}
-      <div className="flex space-x-2 mb-4">
-        <label htmlFor="sortBy">Sort By:</label>
-        <select id="sortBy" value={sortBy} onChange={handleSortChange}>
+    <div className="container mx-auto p-6">
+      {/* Filters Section */}
+      <div className="flex flex-wrap items-center gap-4 mb-6">
+        <label htmlFor="sortSelect" className="font-semibold">
+          Sort By:
+        </label>
+        <select
+          id="sortSelect"
+          className="select select-bordered"
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value)}
+        >
           <option value="timeIn">timeIn</option>
-          <option value="activityName">activityName (nested sort)</option>
-          <option value="serviceUserName">serviceUserName (nested sort)</option>
+          <option value="activityName">activityName</option>
+          <option value="serviceUserName">serviceUserName</option>
         </select>
 
-        <label htmlFor="order">Order:</label>
-        <select id="order" value={order} onChange={handleOrderChange}>
+        <label htmlFor="orderSelect" className="font-semibold">
+          Order:
+        </label>
+        <select
+          id="orderSelect"
+          className="select select-bordered"
+          value={order}
+          onChange={(e) => setOrder(e.target.value as 'asc' | 'desc')}
+        >
           <option value="asc">asc</option>
           <option value="desc">desc</option>
         </select>
 
-        <label htmlFor="groupBy">Group By:</label>
-        <select id="groupBy" value={groupBy} onChange={handleGroupChange}>
+        <label htmlFor="groupSelect" className="font-semibold">
+          Group By:
+        </label>
+        <select
+          id="groupSelect"
+          className="select select-bordered"
+          value={groupBy}
+          onChange={(e) =>
+            setGroupBy(
+              e.target.value as
+                | 'none'
+                | 'timeIn'
+                | 'activityId'
+                | 'admissionId',
+            )
+          }
+        >
           <option value="none">None</option>
           <option value="timeIn">timeIn</option>
           <option value="activityId">activityId</option>
@@ -162,11 +189,8 @@ const InfiniteSessionsList: React.FC = () => {
         </select>
       </div>
 
-      {/* Data */}
-      <div className="overflow-y-auto max-h-[calc(100vh-150px)]">
-        {/* 1) map each 'page' in data.pages,
-            2) explicitly type parameters */}
-
+      {/* Sessions List */}
+      <div className="overflow-y-auto max-h-[calc(100vh-180px)]">
         {/*  @ts-ignore */}
         {data?.pages.map((page: SessionsData, pageIndex: number) =>
           renderPage(page, pageIndex),
@@ -181,11 +205,16 @@ const InfiniteSessionsList: React.FC = () => {
             }}
           >
             {({ ref }) => (
-              <div ref={ref} className="h-10 bg-gray-200 text-center">
+              <div ref={ref} className="flex justify-center items-center p-4">
                 {isFetchingNextPage ? (
-                  <p>Loading more...</p>
+                  <span className="loading loading-spinner text-primary"></span>
                 ) : (
-                  <p>Load more...</p>
+                  <button
+                    className="btn btn-outline"
+                    onClick={() => fetchNextPage()}
+                  >
+                    Load more
+                  </button>
                 )}
               </div>
             )}
@@ -193,7 +222,7 @@ const InfiniteSessionsList: React.FC = () => {
         )}
 
         {!hasNextPage && !isFetching && (
-          <div className="h-10 bg-gray-200 text-center">
+          <div className="text-center p-4 text-gray-500">
             <p>No more sessions to load.</p>
           </div>
         )}
