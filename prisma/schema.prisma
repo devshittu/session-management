@@ -11,6 +11,7 @@ generator client {
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model ServiceUser {
@@ -57,4 +58,4 @@ model Session {
   timeOut      DateTime?
 }
 
-// prisma/schema.prisma
+// prisma/schema.template.prisma
