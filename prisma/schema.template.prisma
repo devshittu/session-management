@@ -10,8 +10,8 @@ generator client {
 
 datasource db {
   provider = "$PROVIDER$"
-  url      = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  url       = "$DATABASE_URL$"
+  directUrl = "$DIRECT_URL$"
 }
 
 model ServiceUser {
