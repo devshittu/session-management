@@ -7,29 +7,32 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    environment: staging
     steps:
       - name: Check out code
         uses: actions/checkout@v3
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile # --legacy-peer-deps
+        run: yarn install --frozen-lockfile
 
-      - name: Generate Prisma Schema for Production
-        run: npx ts-node --compiler-options '{"module":"CommonJS"}' prisma/generate-schema.ts
+      - name: Build the project
+        run: yarn build
         env:
           DATABASE_PROVIDER: postgresql
+          DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.PROD_DIRECT_URL }}
 
       - name: Run Production Migrations
         run: yarn prisma migrate deploy --schema=prisma/schema.prisma
         env:
           DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
-          DATABASE_PROVIDER: postgresql
+          DIRECT_URL: ${{ secrets.PROD_DIRECT_URL }}
 
       - name: Seed Production Database
         run: yarn prisma:seed:prod
         env:
           DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
-          DATABASE_PROVIDER: postgresql
+          DIRECT_URL: ${{ secrets.PROD_DIRECT_URL }}
 
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v25
@@ -39,4 +42,4 @@ jobs:
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
         env:
           DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
-          DATABASE_PROVIDER: postgresql
+          DIRECT_URL: ${{ secrets.PROD_DIRECT_URL }}
