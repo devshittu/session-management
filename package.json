@@ -4,9 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/generate-schema.ts",
+    "prebuild": "yarn prisma:generate-schema",
     "build": "next build",
-    "postinstall": "prisma generate --schema=prisma/schema.prisma",
     "start": "next start",
     "prettier": "prettier \"**/*.+(json|ts|tsx)\"",
     "format:fix": "npm run prettier -- --write",
