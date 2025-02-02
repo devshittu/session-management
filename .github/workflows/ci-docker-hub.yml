@@ -12,6 +12,8 @@ env:
 
 jobs:
   build:
+    # TODO: remove next line to activate the job
+    if: false
     name: Build and Push Docker Image
     runs-on: ubuntu-latest
     environment: staging
