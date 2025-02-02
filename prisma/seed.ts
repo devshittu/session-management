@@ -1,5 +1,13 @@
 import { prisma } from '../src/lib/prisma';
 import { faker } from '@faker-js/faker';
+import { config } from 'dotenv';
+import path from 'path';
+
+// Load environment variables from .env.prod
+config({ path: path.resolve(process.cwd(), '.env.prod') });
+
+// Log the DATABASE_URL for debugging
+console.log('Loaded DATABASE_URL:', process.env.DATABASE_URL);
 
 async function main() {
   console.log('Clearing existing data...');
