@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/generate-schema.ts",
     "build": "next build",
+    "postinstall": "prisma generate --schema=prisma/schema.prisma",
     "start": "next start",
     "prettier": "prettier \"**/*.+(json|ts|tsx)\"",
     "format:fix": "npm run prettier -- --write",
@@ -23,7 +25,8 @@
     "prisma:migrate:dev": "dotenv -e .env -- npx prisma migrate dev --schema=prisma/schema.prisma",
     "prisma:generate": "dotenv -e .env -- npx prisma generate --schema=prisma/schema.prisma",
     "prisma:seed:dev": "dotenv -e .env -- npx ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts",
-    "prisma:seed:prod": "dotenv -e .env.production -- npx ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts"
+    "prisma:seed:prod": "npx ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts",
+    "prisma:generate-client": "yarn prisma generate"
   },
   "dependencies": {
     "@floating-ui/react": "^0.27.1",
