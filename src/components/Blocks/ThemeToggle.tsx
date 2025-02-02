@@ -1,17 +1,19 @@
+// src/app/components/ThemeToggle.tsx
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MdOutlineDarkMode, MdOutlineLightMode } from 'react-icons/md';
 
-const ThemeToggle = () => {
-  const [theme, setTheme] = useState(() => {
+const ThemeToggle: React.FC = () => {
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('theme') || 'light';
+      return (localStorage.getItem('theme') as 'light' | 'dark') || 'light';
     }
     return 'light';
   });
 
   useEffect(() => {
+    // Instead of setting a class, we set a data attribute.
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
   }, [theme]);
@@ -22,9 +24,9 @@ const ThemeToggle = () => {
       onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
     >
       {theme === 'light' ? (
-        <MdOutlineDarkMode size={24} />
+        <MdOutlineDarkMode size={24} className="text-base-content" />
       ) : (
-        <MdOutlineLightMode size={24} />
+        <MdOutlineLightMode size={24} className="text-base-content" />
       )}
     </button>
   );
