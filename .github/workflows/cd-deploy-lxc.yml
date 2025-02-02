@@ -2,7 +2,7 @@ name: CD Pipeline for Docker Compose
 
 on:
   workflow_run:
-    workflows: ["CI Pipeline"]
+    workflows: ['CI Pipeline']
     branches:
       - main
     types:
@@ -13,12 +13,14 @@ on:
   workflow_dispatch:
 
 env:
-  DOCKER_INTERNAL_NETWORK_NAME: "my_media_network"
+  DOCKER_INTERNAL_NETWORK_NAME: 'my_media_network'
   REPOSITORY_NAME: session-management
 
 jobs:
   deploy:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    # TODO: remove next line to activate the job and uncomment the next line after that.
+    if: false
+    # if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: self-hosted
     environment: staging
 
@@ -65,7 +67,6 @@ jobs:
         run: |
           sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/session-management:actman-app-latest
 
-        
       # Deploy DuckDNS service using Docker Compose
       - name: Deploy DuckDNS
         run: |
@@ -78,7 +79,6 @@ jobs:
       - name: Verify DuckDNS Service
         run: |
           docker ps | grep duckdns
-
 
       # - name: Delete Old docker container for web app
       #   run: sudo docker compose -f docker-compose.staging.yml down web-app || true
