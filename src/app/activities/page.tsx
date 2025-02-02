@@ -9,7 +9,7 @@ export default async function ActivitiesPage() {
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-6 text-primary">Activities</h1>
+      <h1 className="h2">Activities</h1>
       <div className="flex justify-between items-center mb-6">
         <Link href="/activities/new">
           <button className="btn btn-primary">+ Create New Activity</button>
