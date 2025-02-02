@@ -1,4 +1,5 @@
 name: Deploy to Production
+
 on:
   push:
     branches:
@@ -9,74 +10,58 @@ jobs:
     runs-on: ubuntu-latest
     environment: staging
 
+    env:
+      # These environment variables will be used by the generate-schema script.
+      DATABASE_PROVIDER: postgresql
+      # Although the generated schema will have hardcoded URLs, we still pass these
+      # for consistency in logging and any potential future use.
+      DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}        # e.g., transaction pooler URL
+      DIRECT_URL: ${{ secrets.PROD_DIRECT_URL }}            # e.g., direct connection for migrations
+
     steps:
-      - name: Check out code
+      - name: Check out repository
         uses: actions/checkout@v3
 
-      # Setup the Node.js environment you need (16.x, 18.x, etc.)
-      - name: Set up Node
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: "18"  # Adjust to your required version
 
-      # Install dependencies using yarn + handle frozen lockfile + legacy peer deps
       - name: Install dependencies
-        run: |
-          yarn install --frozen-lockfile --legacy-peer-deps
+        run: yarn install --frozen-lockfile --legacy-peer-deps
 
-      # (Optional) Validate everything before continuing:
-      # e.g. run ESLint, type-checks, or other checks
-      # - name: Lint
-      #   run: yarn lint
-
-      - name: Debug Database URL
-        run: echo "DATABASE_URL is ${DATABASE_URL} \n DIRECT_URL is ${DIRECT_URL} \n DATABASE_PROVIDER is ${DATABASE_PROVIDER}"
+      # Generate the Prisma schema from your template (this produces prisma/schema.prisma with hardcoded URLs)
+      - name: Generate Prisma Schema
+        run: yarn ts-node --compiler-options '{"module":"CommonJS"}' prisma/generate-schema.ts
         env:
-          DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
-          DIRECT_URL: ${{ secrets.PROD_DIRECT_URL }}
-          DATABASE_PROVIDER: ${{ secrets.PROD_DATABASE_PROVIDER }}
+          DATABASE_PROVIDER: ${{ env.DATABASE_PROVIDER }}
+          # Note: The script itself hardcodes the connection strings.
+          # You can also pass the connection strings as env vars if you wish,
+          # but in this case they are already hardcoded.
 
-      # Generate the Prisma schema from your template.
-      # This replaces $PROVIDER$ with 'postgresql' for production
-      - name: Generate Prisma schema
-        run: |
-          yarn ts-node --compiler-options '{"module":"CommonJS"}' prisma/generate-schema.ts
-        env:
-          DATABASE_PROVIDER: ${{ secrets.PROD_DATABASE_PROVIDER }}
-
-      # Generate Prisma Client from the newly generated schema.prisma
+      # Generate Prisma Client to ensure it is up to date
       - name: Generate Prisma Client
-        run: |
-          yarn prisma generate --schema=prisma/schema.prisma
-        env:
-          DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
-          DIRECT_URL: ${{ secrets.PROD_DIRECT_URL }}
+        run: yarn prisma generate --schema=prisma/schema.prisma
 
-      # Deploy migrations to your production DB
-      - name: Deploy Production Migrations
-        run: |
-          yarn prisma migrate deploy --schema=prisma/schema.prisma
-        env:
-          DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
-          DIRECT_URL: ${{ secrets.PROD_DIRECT_URL }}
+      # Apply migrations to update the production database
+      - name: Deploy Prisma Migrations
+        run: yarn prisma migrate deploy --schema=prisma/schema.prisma
 
-      # Seed the Production Database (if you have a special script)
+      # Seed the production database (if applicable)
       - name: Seed Production Database
-        run: |
-          yarn prisma:seed:prod
+        run: yarn prisma:seed:prod
         env:
-          DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
-          DIRECT_URL: ${{ secrets.PROD_DIRECT_URL }}
+          DATABASE_URL: ${{ env.DATABASE_URL }}
+          DIRECT_URL: ${{ env.DIRECT_URL }}
 
-      # Build your Next.js project
+      # Build the Next.js application
       - name: Build Next.js App
-        run: |
-          yarn build
+        run: yarn build
         env:
-          DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
-          DIRECT_URL: ${{ secrets.PROD_DIRECT_URL }}
+          DATABASE_URL: ${{ env.DATABASE_URL }}
+          DIRECT_URL: ${{ env.DIRECT_URL }}
 
-      # Deploy to Vercel with environment variables
+      # Deploy to Vercel
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v25
         with:
@@ -84,6 +69,6 @@ jobs:
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
         env:
-          DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
-          DIRECT_URL: ${{ secrets.PROD_DIRECT_URL }}
-          DATABASE_PROVIDER: ${{ secrets.PROD_DATABASE_PROVIDER }}
+          DATABASE_URL: ${{ env.DATABASE_URL }}
+          DIRECT_URL: ${{ env.DIRECT_URL }}
+          DATABASE_PROVIDER: ${{ env.DATABASE_PROVIDER }}
