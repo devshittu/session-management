@@ -30,14 +30,11 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile --legacy-peer-deps
 
-      # Generate the Prisma schema from your template (this produces prisma/schema.prisma with hardcoded URLs)
+      # Generate the Prisma schema from the template
       - name: Generate Prisma Schema
-        run: yarn ts-node --compiler-options '{"module":"CommonJS"}' prisma/generate-schema.ts
+        run: yarn prisma:generate-schema
         env:
           DATABASE_PROVIDER: ${{ env.DATABASE_PROVIDER }}
-          # Note: The script itself hardcodes the connection strings.
-          # You can also pass the connection strings as env vars if you wish,
-          # but in this case they are already hardcoded.
 
       # Generate Prisma Client to ensure it is up to date
       - name: Generate Prisma Client
