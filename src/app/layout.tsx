@@ -3,8 +3,7 @@ import localFont from 'next/font/local';
 import './globals.css';
 import './prism.css';
 import { AppProvider } from '@/providers/app';
-import Navbar from '@/components/Blocks/Navbar';
-import Sidebar from '@/components/Blocks/Sidebar';
+import Header from '@/components/Blocks/Header';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -34,13 +33,15 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-base-200`}
       >
         <AppProvider>
-          <div className="drawer lg:drawer-open">
-            <input id="nav-drawer" type="checkbox" className="drawer-toggle" />
-            <div className="drawer-content flex flex-col min-h-screen">
-              <Navbar />
-              <main className="p-6 container mx-auto">{children}</main>
-            </div>
-            <Sidebar />
+          <div className="flex flex-col min-h-screen overflow-hidden">
+            {/*  Site header */}
+            <Header />
+            <main className="flex-grow">
+              <div className="max-w-6xl mx-auto px-4 sm:px-6">
+                {/* Hero content */}
+                <div className="pt-32 pb-12 md:pt-40 md:pb-20">{children}</div>
+              </div>
+            </main>
           </div>
         </AppProvider>
       </body>
