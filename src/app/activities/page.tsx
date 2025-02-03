@@ -1,45 +1,40 @@
 // src/app/activities/page.tsx
 
+import ItemsSection from '@/components/Blocks/ItemsSection';
 import { prisma } from '@/lib/prisma';
-import Link from 'next/link';
-import { FiEdit, FiTrash } from 'react-icons/fi';
+import { Activity } from '@/types/serviceUser';
 
+// This is an async server component that fetches activities data
 export default async function ActivitiesPage() {
-  const activities = await prisma.activity.findMany();
+  // Fetch activities from your database and convert dates to strings
+  const activities: Activity[] = (await prisma.activity.findMany()).map(
+    (activity) => ({
+      ...activity,
+      createdAt: activity.createdAt.toISOString(),
+      updatedAt: activity.updatedAt?.toISOString() || null,
+    }),
+  );
+
+  // Set default view mode (we only pass a value, no function)
+  const viewMode: 'grid' | 'list' = 'grid';
 
   return (
-    <div className="container mx-auto py-8">
-      <h1 className="h2">Activities</h1>
-      <div className="flex justify-between items-center mb-6">
-        <Link href="/activities/new">
-          <button className="btn btn-primary">+ Create New Activity</button>
-        </Link>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <ItemsSection items={activities} viewMode={viewMode} title="Activities">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {activities.map((activity) => (
-          <div key={activity.id} className="card shadow-lg bg-base-100">
-            <div className="card-body">
-              <h2 className="card-title text-lg font-semibold">
-                {activity.name}
-              </h2>
-              <div className="card-actions justify-end">
-                <Link href={`/activities/${activity.id}/edit`} passHref>
-                  <button className="btn btn-sm btn-outline btn-info flex items-center gap-1">
-                    <FiEdit />
-                    Edit
-                  </button>
-                </Link>
-                <Link href={`/activities/${activity.id}/delete`} passHref>
-                  <button className="btn btn-sm btn-outline btn-error flex items-center gap-1">
-                    <FiTrash />
-                    Delete
-                  </button>
-                </Link>
-              </div>
-            </div>
+          <div
+            key={activity.id}
+            className="p-4 border rounded bg-base-100 text-base-content"
+          >
+            <h3 className="font-bold">{activity.name}</h3>
+            {activity.createdAt && (
+              <p className="text-sm">
+                Created on: {new Date(activity.createdAt).toLocaleDateString()}
+              </p>
+            )}
           </div>
         ))}
       </div>
-    </div>
+    </ItemsSection>
   );
 }
