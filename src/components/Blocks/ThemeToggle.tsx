@@ -20,13 +20,13 @@ const ThemeToggle: React.FC = () => {
 
   return (
     <button
-      className="btn btn-ghost"
+      className="btn !p-2 text-base-content"
       onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
     >
       {theme === 'light' ? (
-        <MdOutlineDarkMode size={24} className="text-base-content" />
+        <MdOutlineDarkMode size={24} className="text-current" />
       ) : (
-        <MdOutlineLightMode size={24} className="text-base-content" />
+        <MdOutlineLightMode size={24} className="text-current" />
       )}
     </button>
   );
