@@ -4,7 +4,7 @@ module.exports = {
     es2021: true,
     node: true
   },
-  extends: ['plugin:react/recommended', 'plugin:jsx-a11y/recommended', 'plugin:react-hooks/recommended', 'next/core-web-vitals', 'prettier', 'plugin:storybook/recommended', 'plugin:storybook/recommended'],
+  extends: ['plugin:react/recommended', 'plugin:jsx-a11y/recommended', 'plugin:react-hooks/recommended', 'next/core-web-vitals', 'prettier'],
   overrides: [],
   parserOptions: {
     ecmaVersion: 'latest',
