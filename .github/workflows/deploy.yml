@@ -44,12 +44,15 @@ jobs:
       - name: Deploy Prisma Migrations
         run: yarn prisma migrate deploy --schema=prisma/schema.prisma
 
-      # Seed the production database (if applicable)
-      - name: Seed Production Database
-        run: yarn prisma:seed:prod
+      
+      # Conditionally reset the production database if commit message contains "reset db" or "db reset"
+      - name: Conditionally Reset Production Database
+        if: contains(github.event.head_commit.message, 'reset db') || contains(github.event.head_commit.message, 'db reset')
+        run: yarn db:reset:prod
         env:
-          DATABASE_URL: ${{ env.DATABASE_URL }}
-          DIRECT_URL: ${{ env.DIRECT_URL }}
+          DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.PROD_DIRECT_URL }}
+          DATABASE_PROVIDER: postgresql
 
       # Build the Next.js application
       - name: Build Next.js App
@@ -69,3 +72,5 @@ jobs:
           DATABASE_URL: ${{ env.DATABASE_URL }}
           DIRECT_URL: ${{ env.DIRECT_URL }}
           DATABASE_PROVIDER: ${{ env.DATABASE_PROVIDER }}
+
+# .github/workflows/deploy.yml
