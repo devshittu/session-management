@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "prebuild": "yarn prisma:generate-schema",
+    "postinstall": "npx prisma generate --schema=prisma/schema.prisma",
     "build": "next build",
     "start": "next start",
     "prettier": "prettier \"**/*.+(json|ts|tsx)\"",
@@ -23,7 +24,7 @@
     "prisma:generate-schema": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/generate-schema.ts",
     "prisma:generate-:schema:prod": "dotenv -e .env.prod ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/generate-schema.ts",
     "prisma:migrate:dev": "dotenv -e .env -- npx prisma migrate dev --schema=prisma/schema.prisma",
-    "prisma:generate": "dotenv -e .env -- npx prisma generate --schema=prisma/schema.prisma",
+    "prisma:generate": "npx prisma generate --schema=prisma/schema.prisma",
     "prisma:seed:dev": "dotenv -e .env -- npx ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts",
     "prisma:seed:prod": "npx ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts",
     "db:reset:dev": "dotenv -e .env -- npx prisma migrate reset --force && yarn prisma:seed:dev",
