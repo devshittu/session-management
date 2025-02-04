@@ -27,7 +27,6 @@ COPY .hintrc .
 COPY .husky .
 COPY .prettierignore .
 COPY .prettierrc .
-COPY .storybook .
 COPY jest.config.js .
 COPY lint-staged.config.js .
 COPY next-env.d.ts .
