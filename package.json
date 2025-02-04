@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "prebuild": "yarn prisma:generate-schema",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "prettier": "prettier \"**/*.+(json|ts|tsx)\"",
     "format:fix": "npm run prettier -- --write",
