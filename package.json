@@ -1,10 +1,11 @@
 {
-  "name": "new-next",
+  "name": "åctman",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "prebuild": "yarn prisma:generate-schema",
+    "postinstall": "yarn prisma:generate-schema && yarn prisma generate",
     "build": "next build",
     "start": "next start",
     "prettier": "prettier \"**/*.+(json|ts|tsx)\"",
