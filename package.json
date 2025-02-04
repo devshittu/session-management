@@ -26,6 +26,8 @@
     "prisma:generate": "dotenv -e .env -- npx prisma generate --schema=prisma/schema.prisma",
     "prisma:seed:dev": "dotenv -e .env -- npx ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts",
     "prisma:seed:prod": "npx ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts",
+    "db:reset:dev": "dotenv -e .env -- npx prisma migrate reset --force && yarn prisma:seed:dev",
+    "db:reset:prod": "npx prisma migrate reset --force",
     "prisma:generate-client": "yarn prisma generate"
   },
   "dependencies": {
