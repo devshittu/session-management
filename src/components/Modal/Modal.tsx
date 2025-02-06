@@ -1,8 +1,7 @@
-// src/app/components/Modal.tsx
 'use client';
 
 import React, { useEffect, useRef, ReactNode } from 'react';
-import Transition from '../utils/Transition';
+import Transition from '../Transition/Transition';
 
 export interface ModalProps {
   children: ReactNode;
@@ -94,3 +93,4 @@ const Modal: React.FC<ModalProps> = ({
 };
 
 export default Modal;
+// src/components/Modal/Modal.tsx
