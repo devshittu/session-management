@@ -1,11 +1,15 @@
 import Features from '@/components/Blocks/Features';
 import HeroHome from '@/components/Blocks/HeroHome';
+import SearchServiceUsers from '@/features/Search/ui/SearchServiceUsers';
+import ActiveSessionsDashboard from '@/features/Sessions/ui/ActiveSessionsDashboard';
 import Image from 'next/image';
 import { FaBezierCurve } from 'react-icons/fa';
 
 export default function Home() {
   return (
     <>
+      <ActiveSessionsDashboard />
+      <SearchServiceUsers />
       <HeroHome />
       {/* <Features /> */}
       {/* <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">

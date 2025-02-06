@@ -179,3 +179,5 @@ const Transition: React.FC<TransitionProps> = ({
 };
 
 export default Transition;
+
+// src/components/Transition/Transition.tsx

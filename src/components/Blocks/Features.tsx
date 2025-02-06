@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect, MouseEvent } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import Transition from '@/utils/Transition';
+import Transition from '@/components/Transition/Transition';
 
 //-----------------//
 //    Subcomponents
