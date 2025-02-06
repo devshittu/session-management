@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import Modal from '@/utils/Modal'; // Ensure your Modal component is typed
 
 /** -------------- 1) MICRO-COMPONENTS -------------- **/
 
