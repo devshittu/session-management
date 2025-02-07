@@ -12,7 +12,7 @@ import {
   GroupedSession,
 } from '@/types/serviceUser';
 import { useSessions } from '@/hooks/useSessions';
-import ElapsedTime from './ElapsedTime';
+import ElapsedTime from '@/features/Sessions/ui/ElapsedTime';
 
 // Define SessionsData type
 type SessionsData = SessionsResponse | GroupedResponse;
@@ -114,6 +114,7 @@ const InfiniteSessionsList: React.FC = () => {
                   <ElapsedTime
                     timeIn={session.timeIn}
                     timeOut={session.timeOut}
+                    big
                   />
                 </p>
 
