@@ -1,6 +1,6 @@
 // app/serviceUsers/new/page.tsx
 
-import NewServiceUserForm from './NewServiceUserForm';
+import NewServiceUserForm from '../../../features/ServiceUsers/ui/NewServiceUserForm';
 
 export default function NewServiceUserPage() {
   return (
