@@ -109,14 +109,14 @@ const InfiniteSessionsList: React.FC = () => {
                     <span className="badge badge-warning">In Progress</span>
                   )}
                 </p>
-                <p>
+                <div>
                   ⏰ Elapsed Time:{' '}
                   <ElapsedTime
                     timeIn={session.timeIn}
                     timeOut={session.timeOut}
                     big
                   />
-                </p>
+                </div>
 
                 {/* End session button */}
                 {!session.timeOut && (
