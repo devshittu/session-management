@@ -34,13 +34,20 @@ const ThemeToggle: React.FC = () => {
   if (!mounted) return null;
 
   return (
-    <button className="btn !p-2 text-base-content" onClick={toggleTheme}>
-      {theme === 'light' ? (
-        <MdOutlineDarkMode size={24} className="text-current" />
-      ) : (
-        <MdOutlineLightMode size={24} className="text-current" />
-      )}
-    </button>
+    <>
+      <button
+        type="button"
+        onClick={toggleTheme}
+        className="text-blue-700 border border-blue-700 hover:bg-blue-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg p-2.5 text-center inline-flex items-center me-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800 dark:hover:bg-blue-500"
+      >
+        {theme === 'light' ? (
+          <MdOutlineDarkMode size={24} className="w-5 h-5 text-current" />
+        ) : (
+          <MdOutlineLightMode size={24} className="w-5 h-5 text-current" />
+        )}
+        <span className="sr-only">Toggle Theme</span>
+      </button>
+    </>
   );
 };
 
