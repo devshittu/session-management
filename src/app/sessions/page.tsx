@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma';
-import InfiniteSessionsList from './InfiniteSessionsList';
+import InfiniteSessionsList from '../../features/Sessions/ui/InfiniteSessionsList';
 
 type Session = {
   id: number;
