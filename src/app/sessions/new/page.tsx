@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma';
-import SessionForm from './SessionForm';
+import SessionForm from '../../../features/Sessions/ui/SessionForm';
 
 type Admission = {
   id: number;
