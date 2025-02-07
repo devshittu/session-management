@@ -1,4 +1,4 @@
-import ServiceUsersList from './ServiceUsersList';
+import ServiceUsersList from '../../features/ServiceUsers/ui/ServiceUsersList';
 
 export default function ServiceUsersPage() {
   return (
