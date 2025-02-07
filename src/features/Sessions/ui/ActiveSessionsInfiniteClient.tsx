@@ -64,7 +64,7 @@ const ActiveSessionsInfiniteClient: React.FC = () => {
             {/* @ts-ignore */}
             Total Active: {data?.pages[0]?.total || 0}
           </div>
-          <Link href="/active-sessions/full" className="btn btn-primary">
+          <Link href="/sessions/active" className="btn btn-primary">
             View All
           </Link>
         </div>
