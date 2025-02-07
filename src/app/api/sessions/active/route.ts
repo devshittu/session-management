@@ -18,6 +18,11 @@ export async function GET(request: Request) {
       },
     });
 
+    // Get the total count of active sessions
+    const total = await prisma.session.count({
+      where: { timeOut: null },
+    });
+
     const serializedSessions = sessions.map((session) => ({
       ...session,
       timeIn: session.timeIn.toISOString(),
@@ -31,7 +36,7 @@ export async function GET(request: Request) {
       },
     }));
 
-    return NextResponse.json({ sessions: serializedSessions });
+    return NextResponse.json({ sessions: serializedSessions, total });
   } catch (error) {
     console.error('Failed to fetch active sessions:', error);
     return NextResponse.json(
@@ -40,3 +45,5 @@ export async function GET(request: Request) {
     );
   }
 }
+
+// src/app/api/sessions/active/route.ts

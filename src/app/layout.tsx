@@ -4,6 +4,9 @@ import './globals.css';
 import './prism.css';
 import { AppProvider } from '@/providers/app';
 import Header from '@/components/Blocks/Header';
+import AppNav from '@/components/Blocks/AppNav';
+import { Suspense } from 'react';
+import { Loading } from '@/components/loading';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -39,9 +42,12 @@ export default function RootLayout({
             <main className="flex-grow">
               <div className="max-w-6xl mx-auto px-4 sm:px-6">
                 {/* Hero content */}
-                <div className="pt-32 pb-12 md:pt-40 md:pb-20">{children}</div>
+                <div className="pt-32 pb-12 md:pt-40 md:pb-20">
+                  <Suspense fallback={<Loading />}>{children}</Suspense>
+                </div>
               </div>
             </main>
+            <AppNav />
           </div>
         </AppProvider>
       </body>

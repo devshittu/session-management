@@ -14,28 +14,13 @@ type AppProviderProps = {
 };
 
 export const AppProvider = ({ children, theme }: AppProviderProps) => {
-  // Initialize the Zustand store with default settings when the App component mounts
-  // useInitializeStore();
-
   return (
     <>
-      {/* <ThemeProvider attribute="class" forcedTheme={theme || undefined}> */}
-
-      {/* <ThemeProvider attribute="class" enableSystem={true} defaultTheme="light"> */}
       <QueryClientProvider client={queryClient}>
         {IS_DEVELOPMENT && <ReactQueryDevtools initialIsOpen={false} />}
-        <Suspense fallback={<Loading />}>{children}</Suspense>
-
-        {/* <Overlay /> */}
-        {/* <PageMode />
-        <PromptDialog />
-        <Dialog />
-        <DrawerMenu /> */}
-
+        <>{children}</>
         <ToastProvider />
       </QueryClientProvider>
-      {/* <ConfettiEffect /> */}
-      {/* </ThemeProvider> */}
     </>
   );
 };

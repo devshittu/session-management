@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { ServiceUser, ServiceUserStatus } from '@/types/serviceUser';
-import EditServiceUserForm from './EditServiceUserForm';
+import EditServiceUserForm from '../../../../features/ServiceUsers/ui/EditServiceUserForm';
 
 type RouteParams = {
   params: Promise<{ id: string }>;

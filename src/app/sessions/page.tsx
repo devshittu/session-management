@@ -1,6 +1,5 @@
 import { prisma } from '@/lib/prisma';
-import SessionsList from './SessionsList';
-import InfiniteSessionsList from './InfiniteSessionsList';
+import InfiniteSessionsList from '../../features/Sessions/ui/InfiniteSessionsList';
 
 type Session = {
   id: number;
@@ -39,8 +38,6 @@ export default async function SessionsPage() {
       >
         Start New Session
       </a>
-      {/* <SessionsList sessions={serializedSessions} /> */}
-
       <InfiniteSessionsList />
     </div>
   );

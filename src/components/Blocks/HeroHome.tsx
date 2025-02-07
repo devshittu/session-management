@@ -3,6 +3,13 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import {
+  MdLocalActivity,
+  MdEvent,
+  MdGroup,
+  MdBarChart,
+  MdOutlineLocalActivity,
+} from 'react-icons/md';
 
 /** -------------- 1) MICRO-COMPONENTS -------------- **/
 
@@ -199,37 +206,46 @@ export const HeroImage: React.FC<HeroImageProps> = ({ onOpenModal }) => (
 /** AdditionalLinks:
  *  A small section with "Discover More" links (Activities, Sessions, etc.).
  */
-export const AdditionalLinks: React.FC = () => (
-  <div className="text-center pt-8">
-    <h3 className="text-2xl font-bold mb-4">Main Navigation</h3>
-    <div className="flex justify-center space-x-4">
-      <Link
-        href="/activities"
-        className="text-lg font-medium text-blue-600 hover:underline"
-      >
-        Activities
-      </Link>
-      <Link
-        href="/sessions"
-        className="text-lg font-medium text-blue-600 hover:underline"
-      >
-        Sessions
-      </Link>
-      <Link
-        href="/serviceUsers"
-        className="text-lg font-medium text-blue-600 hover:underline"
-      >
-        Service Users
-      </Link>
-      <Link
-        href="/reports"
-        className="text-lg font-medium text-blue-600 hover:underline"
-      >
-        Reports
-      </Link>
+
+export const AdditionalLinks: React.FC = () => {
+  return (
+    <div className="text-center pt-8">
+      <h3 className="text-2xl font-bold mb-4">Main Navigation</h3>
+      <div className="flex justify-center space-x-6">
+        <Link
+          href="/activities"
+          className="flex items-center text-lg font-medium text-blue-600 hover:underline transition-colors"
+        >
+          <MdOutlineLocalActivity className="mr-2" size={24} />
+          Activities
+        </Link>
+        <Link
+          href="/sessions"
+          className="flex items-center text-lg font-medium text-blue-600 hover:underline transition-colors"
+        >
+          <MdEvent className="mr-2" size={24} />
+          Sessions
+        </Link>
+        <Link
+          href="/serviceUsers"
+          className="flex items-center text-lg font-medium text-blue-600 hover:underline transition-colors"
+        >
+          <MdGroup className="mr-2" size={24} />
+          Service Users
+        </Link>
+        <Link
+          href="/reports"
+          className="flex items-center text-lg font-medium text-blue-600 hover:underline transition-colors"
+        >
+          <MdBarChart className="mr-2" size={24} />
+          Reports
+        </Link>
+      </div>
     </div>
-  </div>
-);
+  );
+};
+
+// export default AdditionalLinks;
 
 /** -------------- 2) PARENT COMPONENT (DEFAULT EXPORT) -------------- **/
 
