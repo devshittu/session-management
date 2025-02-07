@@ -33,7 +33,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-base-200`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-base-200  text-base-content`}
       >
         <AppProvider>
           <div className="flex flex-col min-h-screen overflow-hidden">
