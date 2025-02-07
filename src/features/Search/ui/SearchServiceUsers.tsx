@@ -98,18 +98,24 @@ const SearchServiceUsers: React.FC = () => {
         {data?.pages.map((page, pageIndex: number) => (
           <React.Fragment key={pageIndex}>
             {page.serviceUsers.map((user: ServiceUser) => (
-              <div key={user.id} className="card bg-base-100 shadow-md p-4">
+              <div
+                key={user.id}
+                className="card bg-base-100 shadow-md py-3 sm:py-4"
+              >
                 <div className="card-body">
-                  <h3 className="card-title">{user.name}</h3>
-                  <p className="text-sm">NHS: {user.nhsNumber}</p>
-
-                  <div className="card-actions justify-end mt-4">
-                    <button
-                      className="btn btn-primary"
-                      onClick={() => handleCreateSessionClick(user.id)}
-                    >
-                      Create Session
-                    </button>
+                  <div className="flex items-center space-x-4">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="card-title">{user.name}</h3>
+                      <p className="text-sm">NHS: {user.nhsNumber}</p>
+                    </div>
+                    <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+                      <button
+                        className="btn btn-primary"
+                        onClick={() => handleCreateSessionClick(user.id)}
+                      >
+                        Create Session
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
