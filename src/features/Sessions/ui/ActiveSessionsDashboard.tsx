@@ -107,7 +107,7 @@ const ActiveSessionsDashboard: React.FC = () => {
             {sortOrder === 'asc' ? 'Earliest First' : 'Latest First'}
           </button>
           {data?.total && data.total > 6 && (
-            <Link href="/active-sessions" className="btn btn-primary">
+            <Link href="/sessions/active" className="btn btn-primary">
               View All
             </Link>
           )}
