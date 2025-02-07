@@ -56,7 +56,7 @@
 
 import React from 'react';
 import Modal from '@/components/Modal/Modal';
-import SessionForm from '@/app/sessions/new/SessionForm';
+import SessionForm from '@/features/Sessions/ui/SessionForm';
 
 type Admission = {
   id: number;
