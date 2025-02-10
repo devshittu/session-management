@@ -139,11 +139,6 @@ const ServiceUsersList: React.FC = () => {
             className="checkbox checkbox-primary"
           />
         </div>
-
-        {/* Add Service User Button */}
-        <Link href="/serviceUsers/new">
-          <button className="btn btn-primary">+ Add Service User</button>
-        </Link>
       </div>
 
       {/* Service Users List */}
