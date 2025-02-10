@@ -11,7 +11,7 @@ import {
   ResponsiveContainer,
   Legend,
 } from 'recharts';
-import { useMostParticipatedSessions } from './useMostParticipatedSessions';
+import { useMostParticipatedSessions } from './hooks/useMostParticipatedSessions';
 import ChartShimmerLoader from './ChartShimmerLoader';
 
 const MostParticipatedSessionChart: React.FC = () => {

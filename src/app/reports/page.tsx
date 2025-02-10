@@ -1,6 +1,6 @@
 // app/reports/page.tsx
 import DashboardPageFrame from '@/components/Frame/DashboardPageFrame';
-import Reports from '@/components/Reports/Reports';
+import Reports from '@/features/Reports/Reports';
 import Link from 'next/link';
 
 export default function ReportsPage() {

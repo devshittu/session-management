@@ -2,11 +2,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import ReportControls from '@/components/Reports/ReportControls';
+import ReportControls from '@/features/Reports/ReportControls';
 
 import { TimeFrame, ActivityReport } from '@/types/report';
-import CustomBarChart from '@/components/Reports/BarChart';
-import CustomPieChart from '@/components/Reports/PieChart';
+import CustomBarChart from '@/features/Reports/BarChart';
+import CustomPieChart from '@/features/Reports/PieChart';
 
 import SessionTrendReport from './SessionTrendReport';
 import DashboardMetrics from './DashboardMetrics';
