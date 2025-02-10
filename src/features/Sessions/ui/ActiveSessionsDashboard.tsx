@@ -20,19 +20,20 @@ const ActiveSessionsDashboard: React.FC = () => {
     order: sortOrder,
   });
 
-  // Memoize sessions extraction so that its reference remains stable
-  const sessions = useMemo(() => data?.sessions || [], [data]);
+  // Extract total active count or default to 0
+  const totalActive = data?.total ?? 0;
 
-  // Memoize the sessions to display (only up to 6)
+  // Sessions array (or empty if none)
+  const sessions = useMemo(() => data?.sessions || [], [data]);
+  // Show only up to 6
   const sessionsToDisplay = useMemo(() => sessions.slice(0, 6), [sessions]);
 
-  // Toggle sort order between 'asc' and 'desc'
+  // Toggle sort order
   const toggleSortOrder = useCallback(() => {
     setSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'));
-    // The useActiveSessions hook re-runs automatically because the query key changes.
   }, []);
 
-  // Mutation to end a session.
+  // Mutation: end session
   const endSessionMutation = useMutation({
     mutationFn: async (sessionId: number) => {
       const response = await fetch(`/api/sessions/${sessionId}/end`, {
@@ -53,7 +54,7 @@ const ActiveSessionsDashboard: React.FC = () => {
     },
   });
 
-  // Memoized render function to avoid unnecessary re-renders.
+  // Render session card
   const renderSession = useCallback(
     (session: any) => (
       <div key={session.id} className="card bg-base-100 shadow-lg">
@@ -79,34 +80,57 @@ const ActiveSessionsDashboard: React.FC = () => {
             />
           </div>
           <div className="card-actions justify-end">
-            <button
-              onClick={() => endSessionMutation.mutate(session.id)}
-              className="btn btn-error"
-            >
-              End Session
-            </button>
+            {!session.timeOut && (
+              <button
+                onClick={() => endSessionMutation.mutate(session.id)}
+                className="btn btn-error"
+              >
+                End Session
+              </button>
+            )}
           </div>
         </div>
       </div>
     ),
-    [endSessionMutation], // Added endSessionMutation as dependency
+    [endSessionMutation],
   );
 
+  // Handle loading/error
   if (isLoading)
     return <p className="text-center">Loading active sessions...</p>;
   if (isError)
     return <p className="text-center text-error">Error: {error?.message}</p>;
 
+  // If no active sessions, show a big, centered message
+  if (totalActive === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center text-center min-h-[40vh]">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-200 mb-2">
+          No Active Sessions
+        </h2>
+        <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-400 max-w-xl mb-4">
+          To start a session, use the search box below to find a service user
+          you want to engage.
+        </p>
+        {/* Link to your search page or instructions */}
+        <p className="text-base text-gray-500 dark:text-gray-400">
+          <em>Then come back here once a session is started!</em>
+        </p>
+      </div>
+    );
+  }
+
+  // Otherwise, display the normal dashboard
   return (
     <div className="container mx-auto p-4">
       <div className="flex flex-col md:flex-row justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Active Sessions</h1>
         <div className="flex items-center space-x-4">
-          <div className="badge badge-lg">Total Active: {data?.total || 0}</div>
+          <div className="badge badge-lg">Total Active: {totalActive}</div>
           <button className="btn btn-outline" onClick={toggleSortOrder}>
             {sortOrder === 'asc' ? 'Earliest First' : 'Latest First'}
           </button>
-          {data?.total && data.total > 6 && (
+          {totalActive > 6 && (
             <Link href="/sessions/active" className="btn btn-primary">
               View All
             </Link>
