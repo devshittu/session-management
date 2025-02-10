@@ -20,16 +20,15 @@ const ActiveSessionsDashboard: React.FC = () => {
     order: sortOrder,
   });
 
-  // Memoize sessions extraction so that its reference remains stable
+  // Extract sessions (fallback to empty array).
   const sessions = useMemo(() => data?.sessions || [], [data]);
 
-  // Memoize the sessions to display (only up to 6)
+  // Only display up to 6 sessions in the dashboard view.
   const sessionsToDisplay = useMemo(() => sessions.slice(0, 6), [sessions]);
 
-  // Toggle sort order between 'asc' and 'desc'
+  // Toggle sort order between 'asc' and 'desc'.
   const toggleSortOrder = useCallback(() => {
     setSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'));
-    // The useActiveSessions hook re-runs automatically because the query key changes.
   }, []);
 
   // Mutation to end a session.
@@ -53,7 +52,7 @@ const ActiveSessionsDashboard: React.FC = () => {
     },
   });
 
-  // Memoized render function to avoid unnecessary re-renders.
+  // Memoized render function for each session card.
   const renderSession = useCallback(
     (session: any) => (
       <div key={session.id} className="card bg-base-100 shadow-lg">
@@ -79,34 +78,46 @@ const ActiveSessionsDashboard: React.FC = () => {
             />
           </div>
           <div className="card-actions justify-end">
-            <button
-              onClick={() => endSessionMutation.mutate(session.id)}
-              className="btn btn-error"
-            >
-              End Session
-            </button>
+            {!session.timeOut && (
+              <button
+                onClick={() => endSessionMutation.mutate(session.id)}
+                className="btn btn-error"
+              >
+                End Session
+              </button>
+            )}
           </div>
         </div>
       </div>
     ),
-    [endSessionMutation], // Added endSessionMutation as dependency
+    [endSessionMutation],
   );
 
-  if (isLoading)
+  if (isLoading) {
     return <p className="text-center">Loading active sessions...</p>;
-  if (isError)
+  }
+  if (isError) {
     return <p className="text-center text-error">Error: {error?.message}</p>;
+  }
+
+  // Current total of active sessions
+  const totalActive = data?.total ?? 0;
 
   return (
     <div className="container mx-auto p-4">
+      {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Active Sessions</h1>
         <div className="flex items-center space-x-4">
-          <div className="badge badge-lg">Total Active: {data?.total || 0}</div>
+          {/* Show badge only if totalActive > 0, avoiding "0" display */}
+          {totalActive > 0 && (
+            <div className="badge badge-lg">Total Active: {totalActive}</div>
+          )}
           <button className="btn btn-outline" onClick={toggleSortOrder}>
             {sortOrder === 'asc' ? 'Earliest First' : 'Latest First'}
           </button>
-          {data?.total && data.total > 6 && (
+          {/* Show "View All" only if totalActive > 6 */}
+          {totalActive > 6 && (
             <Link href="/sessions/active" className="btn btn-primary">
               View All
             </Link>
@@ -114,6 +125,7 @@ const ActiveSessionsDashboard: React.FC = () => {
         </div>
       </div>
 
+      {/* Session Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {sessionsToDisplay.map(renderSession)}
       </div>
