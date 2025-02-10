@@ -1,11 +1,24 @@
+import DashboardPageFrame from '@/components/Frame/DashboardPageFrame';
 import ServiceUsersList from '../../features/ServiceUsers/ui/ServiceUsersList';
+import Link from 'next/link';
 
 export default function ServiceUsersPage() {
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">ServiceUsers</h1>
-      <ServiceUsersList />
-    </div>
+    <>
+      <DashboardPageFrame
+        title="Service Users"
+        pageActions={
+          <>
+            {/* Add Service User Button */}
+            <Link href="/serviceUsers/new" className="btn btn-primary">
+              + Add Service User
+            </Link>
+          </>
+        }
+      >
+        <ServiceUsersList />
+      </DashboardPageFrame>
+    </>
   );
 }
 // src/app/serviceUsers/page.tsx
