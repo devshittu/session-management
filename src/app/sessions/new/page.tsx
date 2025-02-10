@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import SessionForm from '../../../features/Sessions/ui/SessionForm';
+import DashboardPageFrame from '@/components/Frame/DashboardPageFrame';
 
 type Admission = {
   id: number;
@@ -11,6 +12,9 @@ type Activity = {
   name: string;
 };
 
+export const metadata = {
+  title: 'Start A Sessions',
+};
 export default async function NewSessionPage() {
   const [admissions, activities]: [Admission[], Activity[]] = await Promise.all(
     [
@@ -23,10 +27,20 @@ export default async function NewSessionPage() {
   );
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Start New Session</h1>
-      <SessionForm admissions={admissions} activities={activities} />
-    </div>
+    <>
+      <DashboardPageFrame
+        // kind="status"
+        title="New Session"
+        // status={statuses}
+        // pageActions={
+        //   <Link href={`/sessions/new`} className="btn btn-primary">
+        //     Create New
+        //   </Link>
+        // }
+      >
+        <SessionForm admissions={admissions} activities={activities} />
+      </DashboardPageFrame>
+    </>
   );
 }
 

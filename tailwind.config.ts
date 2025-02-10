@@ -69,6 +69,10 @@ export default {
           '100%': { transform: 'translateY(100px)', opacity: '0.3' },
         },
 
+        shimmer: {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(100%)' },
+        },
         // New dash animation
         'loader-dash': {
           '0%': {
@@ -110,6 +114,8 @@ export default {
         flake6: 'drop 2.2s infinite linear forwards 1.2s',
         flake7: 'drop 2.7s infinite linear forwards 1.2s',
         flake8: 'drop 3s infinite linear forwards 1.4s',
+
+        shimmer: 'shimmer 2s linear infinite',
         // New dash animation
         'loader-dash':
           'loader-dash 2.5s cubic-bezier(.8, 0, .3, 1) alternate infinite',

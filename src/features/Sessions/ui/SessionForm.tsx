@@ -97,7 +97,7 @@ const SessionForm: React.FC<SessionFormProps> = ({
 
   return (
     <div className="w-full max-w-md">
-      <h2 className="text-lg font-semibold mb-4">Start a New Session</h2>
+      {/* <h2 className="text-lg font-semibold mb-4">Start a New Session</h2> */}
       <form onSubmit={startSession} className="space-y-4">
         {/* Service User (Admission) Select */}
         <div className="form-control">
