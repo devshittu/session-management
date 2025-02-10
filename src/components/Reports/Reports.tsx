@@ -3,11 +3,15 @@
 
 import { useState, useEffect } from 'react';
 import ReportControls from '@/components/Reports/ReportControls';
-// import BarChart from '@/components/BarChart';
-// import PieChart from '@/components/PieChart';
+
 import { TimeFrame, ActivityReport } from '@/types/report';
 import CustomBarChart from '@/components/Reports/BarChart';
 import CustomPieChart from '@/components/Reports/PieChart';
+
+import SessionTrendReport from './SessionTrendReport';
+import DashboardMetrics from './DashboardMetrics';
+import MostParticipatedSessionChart from './MostParticipatedSessionChart';
+import ChartShimmerLoader from './ChartShimmerLoader';
 
 const Reports: React.FC = () => {
   const [timeFrame, setTimeFrame] = useState<TimeFrame>('daily');
@@ -32,9 +36,17 @@ const Reports: React.FC = () => {
 
   return (
     <div>
+      <>
+        <div className="p-4">
+          <DashboardMetrics />
+        </div>
+      </>
       <ReportControls selectedTimeFrame={timeFrame} onChange={setTimeFrame} />
       {loading ? (
-        <p>Loading...</p>
+        <>
+          <ChartShimmerLoader />
+          <p>Loading...</p>
+        </>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-whitex p-4 shadow-md rounded-lg">
@@ -45,6 +57,16 @@ const Reports: React.FC = () => {
           </div>
         </div>
       )}
+      <>
+        <div className="p-4">
+          <MostParticipatedSessionChart />
+        </div>
+      </>
+      <>
+        <div className="p-4">
+          <SessionTrendReport />
+        </div>
+      </>
     </div>
   );
 };
