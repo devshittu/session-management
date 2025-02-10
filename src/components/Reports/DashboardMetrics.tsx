@@ -3,7 +3,7 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import MetricCard from './MetricCard';
+import MetricCard, { MetricCardShimmer } from './MetricCard';
 
 export interface Metric {
   title: string;
@@ -26,11 +26,21 @@ const DashboardMetrics: React.FC = () => {
     refetchInterval: 30000, // refresh every 30 seconds
   });
 
-  if (isLoading) return <p>Loading metrics...</p>;
+  if (isLoading) {
+    return (
+      <div className="w-full max-w-3xl">
+        <div className="-mx-2 md:flex">
+          <MetricCardShimmer />
+          <MetricCardShimmer />
+          <MetricCardShimmer />
+        </div>
+      </div>
+    );
+  }
   if (isError) return <p className="text-error">Error: {error?.message}</p>;
 
   return (
-    <div className="w-full max-w-3xl mx-auto">
+    <div className="w-full max-w-3xl">
       <div className="-mx-2 md:flex">
         {data?.map((metric, idx) => (
           <MetricCard
